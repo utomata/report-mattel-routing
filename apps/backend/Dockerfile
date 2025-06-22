@@ -34,8 +34,8 @@ RUN pip install uv
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files
-COPY pyproject.toml uv.lock* ./
+# Copy dependency files from the backend directory
+COPY apps/backend/pyproject.toml apps/backend/uv.lock* ./
 
 # Install dependencies
 RUN uv sync --frozen --no-dev
@@ -58,8 +58,8 @@ COPY --from=deps --chown=fastapi:fastapi /app/.venv /app/.venv
 # Add virtual environment to PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Copy application code
-COPY --chown=fastapi:fastapi . .
+# Copy application code from the backend directory
+COPY --chown=fastapi:fastapi apps/backend/ .
 
 # Switch to non-root user
 USER fastapi
