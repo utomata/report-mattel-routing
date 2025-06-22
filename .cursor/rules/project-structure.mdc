@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Structure Guide
+
+This is a monorepo project using pnpm workspaces with the following structure:
+
+## Main Applications
+- [apps/web/](mdc:apps/web) - React/TypeScript web application using Vite
+- [apps/backend/](mdc:apps/backend) - FastAPI backend application with data files
+
+## Package Management
+- Uses **pnpm** for package management (not npm)
+- Workspace configuration in [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml)
+- Dependencies managed via [pnpm-lock.yaml](mdc:pnpm-lock.yaml)
+
+## Web Application Structure
+- Main entry point: [apps/web/src/main.tsx](mdc:apps/web/src/main.tsx)
+- App component: [apps/web/src/App.tsx](mdc:apps/web/src/App.tsx)
+- Pages directory: [apps/web/src/pages/](mdc:apps/web/src/pages)
+- UI components: [apps/web/src/components/ui/](mdc:apps/web/src/components/ui)
+- Utilities: [apps/web/src/lib/](mdc:apps/web/src/lib)
+
+## Key Configuration Files
+- TypeScript config: [apps/web/tsconfig.json](mdc:apps/web/tsconfig.json)
+- Vite config: [apps/web/vite.config.ts](mdc:apps/web/vite.config.ts)
+- Tailwind config: [apps/web/tailwind.config.ts](mdc:apps/web/tailwind.config.ts)
+- ESLint config: [apps/web/eslint.config.js](mdc:apps/web/eslint.config.js)
+
+## Development Commands
+- Start dev server: `pnpm run dev --filter=<web|backend>`
+- Lint code: `pnpm lint`
+- Build project: `pnpm build`

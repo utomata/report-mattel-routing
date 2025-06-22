@@ -5,34 +5,122 @@ node_modules
 .pnp
 .pnp.js
 
-# Local env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Environment files
+.env*
+!.env.example
 
-# Testing
+# Testing & Coverage
 coverage
+htmlcov/
+.tox/
+.nox/
+.coverage*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
 
-# Turbo
-.turbo
-
-# Vercel
-.vercel
-
-# Build Outputs
+# Build outputs
 .next/
 out/
-build
-dist
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
+# Development tools
+.turbo
+.vercel
+.idea/
+.vscode/
 
-# Debug
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Misc
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.manifest
+*.spec
+*.sage.py
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python package managers
+.python-version
+Pipfile.lock
+poetry.lock
+.pdm.toml
+__pypackages__/
+
+# Python tools
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+cython_debug/
+
+# Web frameworks
+instance/
+.webassets-cache
+.scrapy
+docs/_build/
+.pybuilder/
+target/
+/site
+
+# Task queues
+celerybeat-schedule
+celerybeat.pid
+
+# Translations
+*.mo
+*.pot
+
+# Jupyter
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# Project settings
+.spyderproject
+.spyroject
+.ropeproject
+
+# OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 *.pem
