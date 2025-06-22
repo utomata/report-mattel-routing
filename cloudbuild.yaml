@@ -48,5 +48,12 @@ images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest'
 
+# Service account for the build
+serviceAccount: 'projects/$PROJECT_ID/serviceAccounts/cloud-build-deploy@casual-athenas-25xa7.iam.gserviceaccount.com'
+
+# Options for logging
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 # Timeout for the build
 timeout: '1200s' 
