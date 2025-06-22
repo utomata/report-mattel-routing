@@ -19,7 +19,7 @@ spec:
       timeoutSeconds: 300
       containers:
       # Web App - Main application container (React frontend)
-      - image: us-central1-docker.pkg.dev/PROJECT_ID/mattel-routing/web-app:latest
+      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/web-app:latest
         name: web-app
         ports:
         - name: http1
@@ -35,7 +35,7 @@ spec:
           value: "http://127.0.0.1:8000"
       
       # FastAPI Backend - API service container
-      - image: us-central1-docker.pkg.dev/PROJECT_ID/mattel-routing/fastapi-app:latest
+      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/fastapi-app:latest
         name: fastapi
         env:
         - name: NODE_ENV
