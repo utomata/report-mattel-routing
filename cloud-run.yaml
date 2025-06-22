@@ -51,13 +51,4 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 3
-          failureThreshold: 12
-        volumeMounts:
-        - name: app-data
-          readOnly: true
-          mountPath: /app/data
-      
-      volumes:
-      # Application data
-      - name: app-data
-        emptyDir: {} 
+          failureThreshold: 12 
