@@ -34,8 +34,8 @@ RUN pip install uv
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files from the backend directory
-COPY apps/backend/pyproject.toml apps/backend/uv.lock* ./
+# Copy dependency files from the backend directory (including README.md for build system)
+COPY apps/backend/pyproject.toml apps/backend/uv.lock* apps/backend/README.md ./
 
 # Install dependencies
 RUN uv sync --frozen --no-dev
