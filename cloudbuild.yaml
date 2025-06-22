@@ -1,0 +1,52 @@
+steps:
+  # Build Web App image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-f', 'apps/web/Dockerfile',
+      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
+      '.'
+    ]
+
+  # Build FastAPI image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-f', 'apps/backend/Dockerfile',
+      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest',
+      '.'
+    ]
+
+  # Push Web App image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest'
+    ]
+
+  # Push FastAPI image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest'
+    ]
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run',
+      'services',
+      'replace',
+      'cloud-run.yaml',
+      '--region=us-central1',
+      '--project=$PROJECT_ID'
+    ]
+
+# Store images in Artifact Registry
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest'
+
+# Timeout for the build
+timeout: '1200s' 
