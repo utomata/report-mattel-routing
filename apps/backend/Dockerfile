@@ -55,8 +55,8 @@ WORKDIR /app
 # Copy virtual environment from deps stage
 COPY --from=deps --chown=fastapi:fastapi /app/.venv /app/.venv
 
-# Fix permissions on virtual environment binaries
-RUN chmod +x /app/.venv/bin/*
+# Fix permissions on virtual environment binaries (only regular files, not symlinks)
+RUN find /app/.venv/bin -type f -exec chmod +x {} \;
 
 # Add virtual environment to PATH
 ENV PATH="/app/.venv/bin:$PATH"
