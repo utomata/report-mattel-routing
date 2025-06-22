@@ -3,10 +3,13 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
+      '--build-arg', 'BUILDKIT_INLINE_CACHE=1',
       '-f', 'apps/web/Dockerfile',
       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
       '.'
     ]
+    env:
+      - 'DOCKER_BUILDKIT=1'
 
   # Build FastAPI image
   - name: 'gcr.io/cloud-builders/docker'
