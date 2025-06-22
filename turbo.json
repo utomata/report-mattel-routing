@@ -5,7 +5,12 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "build:docker": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "Dockerfile", "nginx.conf"],
+      "outputs": []
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -17,5 +22,13 @@
       "cache": false,
       "persistent": true
     }
-  }
+  },
+  "globalEnv": [
+    "NODE_ENV",
+    "VITE_API_URL"
+  ],
+  "globalDependencies": [
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml"
+  ]
 }
