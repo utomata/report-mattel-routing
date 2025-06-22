@@ -1,25 +1,17 @@
-# 🚛 Mattel Routing Optimization Report
+# Mattel Route Optimization Dashboard
 
-Una aplicación fullstack para visualizar y analizar la optimización de rutas de distribución de Mattel, construida con React, FastAPI y desplegada en Google Cloud Run.
+Sistema de optimización de rutas para agentes de campo de Mattel, con dashboard interactivo y análisis de datos.
 
-## 📋 Descripción del Proyecto
+## 🎯 Características Principales
 
-Esta aplicación presenta un dashboard interactivo que muestra:
-- **Comparación antes/después** de la optimización de rutas
-- **Análisis de cobertura** de tiendas y trabajadores
-- **Mapas interactivos** con visualización de rutas
-- **Métricas de rendimiento** y KPIs de optimización
-
-## 🏗️ Arquitectura
-
-### Monorepo con Turborepo
-- **Frontend**: React + TypeScript + Vite + Tailwind CSS
-- **Backend**: FastAPI + Python + CSV data processing
-- **UI Components**: shadcn/ui component library
-- **Package Manager**: pnpm workspaces
+- **Dashboard Interactivo**: Métricas en tiempo real de optimización de rutas
+- **Análisis Comparativo**: Comparación antes/después de la optimización
+- **Mapas Interactivos**: Visualización de rutas y cobertura geográfica
+- **API REST**: Backend FastAPI con endpoints optimizados
+- **Responsive Design**: Interfaz adaptativa para diferentes dispositivos
 
 ### Deployment Options
-1. **Cloud Run Sidecars** (Recomendado) - Un servicio con múltiples contenedores
+1. **Cloud Run Multi-Container** (Recomendado) - Un servicio con múltiples contenedores
 2. **Servicios Separados** - Frontend y backend independientes
 
 ## 🚀 Inicio Rápido
@@ -53,20 +45,20 @@ pnpm dev
 ```
 report-mattel-routing/
 ├── apps/
-│   ├── web/                    # React frontend
+│   ├── web/                    # React frontend (main application)
 │   │   ├── src/
 │   │   │   ├── components/     # UI components
 │   │   │   ├── pages/          # Page components
 │   │   │   ├── hooks/          # Custom React hooks
 │   │   │   └── lib/            # Utilities and API client
 │   │   └── Dockerfile          # Frontend container
-│   └── backend/                # FastAPI backend
+│   └── backend/                # FastAPI backend (API service)
 │       ├── data/               # CSV data files
 │       ├── main.py             # FastAPI application
 │       └── Dockerfile          # Backend container
-├── docker/                     # Sidecar Dockerfiles
-│   ├── nginx-sidecar/          # Nginx proxy + React
-│   └── fastapi-sidecar/        # FastAPI optimized
+├── docker/                     # Docker configurations
+│   ├── nginx-sidecar/          # Legacy nginx proxy
+│   └── fastapi-sidecar/        # Legacy FastAPI config
 ├── scripts/                    # Deployment scripts
 └── packages/                   # Shared packages
 ```
@@ -92,29 +84,31 @@ pnpm docker:down               # Detener containers
 
 ### Deployment
 ```bash
-# Cloud Run Sidecars (Recomendado)
-pnpm deploy:sidecar:production
-pnpm deploy:sidecar:staging
+# Cloud Run Multi-Container (Recomendado)
+pnpm deploy
 
-# Servicios Separados
-pnpm deploy:production
-pnpm deploy:staging
+# Deployment manual
+./scripts/deploy.sh [region] [project-id]
 ```
 
 ## 🚀 Deployment
 
-### Opción 1: Cloud Run Sidecars (Recomendado)
-Un solo servicio con Nginx como proxy y FastAPI como backend:
+### Opción 1: Cloud Run Multi-Container (Recomendado)
+Un solo servicio con React frontend como contenedor principal y FastAPI como servicio interno:
 
 ```bash
-./scripts/deploy-sidecar.sh production us-central1
+# Deployment simple
+pnpm deploy
+
+# O con parámetros específicos
+./scripts/deploy.sh us-central1 your-project-id
 ```
 
 ### Opción 2: Servicios Separados
 Frontend y backend como servicios independientes:
 
 ```bash
-./scripts/deploy.sh production us-central1
+./scripts/deploy.sh us-central1
 ```
 
 Ver [DEPLOYMENT.md](./DEPLOYMENT.md) para instrucciones detalladas.
@@ -223,7 +217,7 @@ Este proyecto es privado y pertenece a Utomata para el cliente Mattel.
 - **Repositorio**: https://github.com/utomata/report-mattel-routing
 - **Documentación de Deployment**: [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **Turborepo Docs**: https://turborepo.com/docs
-- **Cloud Run Sidecars**: https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-sidecar-deployments
+- **Cloud Run Multi-Container**: https://cloud.google.com/blog/products/serverless/cloud-run-now-supports-multi-container-deployments
 - **Conventional Commits**: https://www.conventionalcommits.org/
 
 ---

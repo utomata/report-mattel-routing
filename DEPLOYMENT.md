@@ -1,21 +1,22 @@
-# 🚀 Deployment Guide - Mattel Routing Optimization
+# 🚀 Guía de Deployment - Mattel Route Optimization
 
-Esta guía te ayudará a desplegar la aplicación de optimización de rutas de Mattel en Google Cloud Run usando una arquitectura multi-contenedor.
+Guía completa para desplegar la aplicación de optimización de rutas de Mattel en Google Cloud Run.
 
 ## 📋 Prerrequisitos
 
-### 1. Herramientas Requeridas
-- [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) instalado y configurado
-- [Docker](https://docs.docker.com/get-docker/) instalado
-- [Node.js 20+](https://nodejs.org/) y [pnpm](https://pnpm.io/) instalados
-- Cuenta de Google Cloud con facturación habilitada
+### Herramientas Requeridas
+- Google Cloud CLI (`gcloud`)
+- Docker Desktop
+- Node.js 20+
+- pnpm 9+
 
-### 2. Configuración Inicial de GCP
+### Configuración de Google Cloud
 ```bash
-# Autenticarse con Google Cloud
+# Autenticación
 gcloud auth login
+gcloud auth application-default login
 
-# Configurar el proyecto
+# Configurar proyecto
 gcloud config set project YOUR_PROJECT_ID
 
 # Verificar configuración
@@ -24,20 +25,20 @@ gcloud config list
 
 ## 🏗️ Arquitectura de Deployment
 
-### 🆕 **Opción 1: Cloud Run Sidecars (Recomendado)**
+### 🆕 **Opción 1: Cloud Run Multi-Container (Recomendado)**
 
-La aplicación se despliega usando **Cloud Run Sidecars** - patrón multi-contenedor en un solo servicio:
+La aplicación se despliega usando **Cloud Run Multi-Container** - patrón multi-contenedor en un solo servicio:
 
 - **Servicio único**: `mattel-routing-app`
 - **Contenedores**:
-  - **Nginx Sidecar**: Proxy reverso + servidor de archivos estáticos (Puerto 8080)
-  - **FastAPI Container**: API backend (Puerto 8000 interno)
+  - **Web App**: React frontend como contenedor principal (Puerto 8080)
+  - **FastAPI Container**: API backend como servicio interno (Puerto 8000)
 - **Comunicación**: localhost entre contenedores
 - **Ventajas**: Menor latencia, mejor rendimiento, configuración simplificada
 
 #### 🔄 Flujo de Requests
 ```
-Internet → Cloud Run → Nginx (8080) → FastAPI (8000)
+Internet → Cloud Run → Web App (8080) → FastAPI (8000)
                     ↓
                 Static Files (React)
 ```
@@ -56,84 +57,24 @@ Internet → Cloud Run → Nginx (8080) → FastAPI (8000)
 
 ## 🚀 Métodos de Deployment
 
-### 🆕 **Opción A: Sidecar Deployment (Recomendado)**
+### 🆕 **Opción A: Multi-Container Deployment (Recomendado)**
 
 ```bash
-# Deployment con patrón sidecar
-./scripts/deploy-sidecar.sh production us-central1
+# Deployment simple
+pnpm deploy
 
-# Deployment a staging
-./scripts/deploy-sidecar.sh staging us-central1
+# Deployment con parámetros específicos
+./scripts/deploy.sh us-central1 your-project-id
 
-# Con proyecto específico
-./scripts/deploy-sidecar.sh production us-central1 your-project-id
+# Deployment manual
+./scripts/deploy.sh [region] [project-id]
 ```
 
 ### 📦 **Opción B: Servicios Separados**
 
 ```bash
-# Deployment a producción
-pnpm deploy:production
-
-# Deployment a staging
-pnpm deploy:staging
-
-# Deployment personalizado
-./scripts/deploy.sh [environment] [region]
-```
-
-### Opción 2: Deployment Manual
-
-#### Paso 1: Preparar el entorno
-```bash
-# Habilitar APIs necesarias
-gcloud services enable cloudbuild.googleapis.com
-gcloud services enable run.googleapis.com
-gcloud services enable artifactregistry.googleapis.com
-
-# Crear repositorio de Artifact Registry
-gcloud artifacts repositories create mattel-routing \
-    --repository-format=docker \
-    --location=us-central1 \
-    --description="Mattel routing optimization containers"
-
-# Configurar Docker
-gcloud auth configure-docker us-central1-docker.pkg.dev
-```
-
-#### Paso 2: Build y Push de Imágenes
-```bash
-# Backend
-docker build -f apps/backend/Dockerfile -t us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/backend:latest .
-docker push us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/backend:latest
-
-# Frontend
-docker build -f apps/web/Dockerfile -t us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/frontend:latest .
-docker push us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/frontend:latest
-```
-
-#### Paso 3: Deploy a Cloud Run
-```bash
-# Deploy Backend
-gcloud run deploy mattel-routing-backend \
-    --image=us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/backend:latest \
-    --platform=managed \
-    --region=us-central1 \
-    --allow-unauthenticated \
-    --memory=1Gi \
-    --cpu=1 \
-    --port=8080
-
-# Deploy Frontend (después de obtener la URL del backend)
-gcloud run deploy mattel-routing-frontend \
-    --image=us-central1-docker.pkg.dev/YOUR_PROJECT/mattel-routing/frontend:latest \
-    --platform=managed \
-    --region=us-central1 \
-    --allow-unauthenticated \
-    --memory=512Mi \
-    --cpu=1 \
-    --port=8080 \
-    --set-env-vars="VITE_API_URL=https://YOUR_BACKEND_URL/api"
+# Deployment manual
+./scripts/deploy.sh us-central1
 ```
 
 ## 🧪 Testing Local con Docker

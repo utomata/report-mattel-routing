@@ -11,12 +11,7 @@
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
-    "deploy": "./scripts/deploy.sh",
-    "deploy:staging": "./scripts/deploy.sh staging",
-    "deploy:production": "./scripts/deploy.sh production",
-    "deploy:sidecar": "./scripts/deploy-sidecar.sh",
-    "deploy:sidecar:staging": "./scripts/deploy-sidecar.sh staging",
-    "deploy:sidecar:production": "./scripts/deploy-sidecar.sh production"
+    "deploy": "./scripts/deploy.sh"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
