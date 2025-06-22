@@ -1,69 +1,35 @@
 # Multi-stage Dockerfile for React/Vite frontend
-# Optimized for Turborepo with pnpm
+# Simplified for Cloud Build
 
 ARG NODE_VERSION=20-alpine
 
 # ================================
-# Stage 1: Base Alpine with Node.js
+# Stage 1: Build Stage
 # ================================
-FROM node:${NODE_VERSION} AS base
-RUN apk update && apk add --no-cache libc6-compat
-
-# ================================
-# Stage 2: Turborepo Pruning
-# ================================
-FROM base AS pruner
+FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 
-# Install Turborepo and pnpm globally
-RUN npm install -g turbo@^2 pnpm@^9
-
-# Copy entire monorepo
-COPY . .
-
-# Prune the workspace for web app
-RUN turbo prune web --docker
-
-# ================================
-# Stage 3: Install Dependencies
-# ================================
-FROM base AS installer
-WORKDIR /app
-
-# Install pnpm
+# Install pnpm globally
 RUN npm install -g pnpm@^9
 
-# Copy package files from pruned workspace
-COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=pruner /app/out/json/ .
+# Copy workspace configuration files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install dependencies with cache mount
-RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store \
-    pnpm install --frozen-lockfile
+# Copy package.json files for all workspaces
+COPY apps/web/package.json ./apps/web/
+COPY apps/backend/package.json ./apps/backend/
 
-# ================================
-# Stage 4: Build Application
-# ================================
-FROM base AS builder
-WORKDIR /app
+# Install all dependencies
+RUN pnpm install --frozen-lockfile
 
-# Install pnpm and turbo
-RUN npm install -g pnpm@^9 turbo@^2
-
-# Copy dependencies from installer
-COPY --from=installer /app/node_modules ./node_modules
-COPY --from=installer /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=installer /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-
-# Copy source code from pruned workspace
-COPY --from=pruner /app/out/full/ .
+# Copy source code
+COPY . .
 
 # Build the web application
-RUN turbo build --filter=web
+RUN cd apps/web && pnpm run build
 
 # ================================
-# Stage 5: Production Server
+# Stage 2: Production Server
 # ================================
 FROM nginx:alpine AS runner
 
