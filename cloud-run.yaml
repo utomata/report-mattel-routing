@@ -29,8 +29,6 @@ spec:
             cpu: 1000m
             memory: 1Gi
         env:
-        - name: PORT
-          value: "8080"
         - name: NODE_ENV
           value: "production"
         - name: VITE_API_BASE_URL
@@ -40,8 +38,6 @@ spec:
       - image: us-central1-docker.pkg.dev/PROJECT_ID/mattel-routing/fastapi-app:latest
         name: fastapi
         env:
-        - name: PORT
-          value: "8000"
         - name: NODE_ENV
           value: "production"
         resources:
