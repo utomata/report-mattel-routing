@@ -11,27 +11,26 @@ RUN apt-get update && apt-get install -y \
 # Install uv from the official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy the application into the container
-COPY apps/backend/ /app
-
-# Install the application dependencies
-WORKDIR /app
-RUN uv sync --frozen --no-cache --no-dev
-
-# Create non-root user for security
+# Create non-root user for security (before copying files)
 RUN groupadd --system --gid 1001 fastapi && \
     useradd --system --uid 1001 --gid fastapi --create-home fastapi
 
-# Change ownership of the app directory
-RUN chown -R fastapi:fastapi /app
+# Copy the application into the container and set ownership
+COPY --chown=fastapi:fastapi apps/backend/ /app
 
-# Switch to non-root user
+# Set working directory
+WORKDIR /app
+
+# Switch to non-root user before installing dependencies
 USER fastapi
+
+# Install the application dependencies as the fastapi user
+RUN uv sync --frozen --no-cache --no-dev
 
 # Expose port 8000 (internal API port)
 EXPOSE 8000
 
-# Health check
+# Health check (run as fastapi user)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
