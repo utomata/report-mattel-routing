@@ -25,9 +25,11 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Set build-time environment variable for API base URL
+# Set build-time environment variables
 ARG VITE_API_BASE_URL=""
+ARG VITE_GOOGLE_MAPS_API_KEY=""
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
 
 # Build the web application
 RUN cd apps/web && pnpm run build
