@@ -37,6 +37,12 @@ FROM nginx:alpine AS runner
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001
 
+# Create directories for nginx temp files and logs with proper permissions
+RUN mkdir -p /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp && \
+    chown -R nextjs:nodejs /tmp/client_temp /tmp/proxy_temp /tmp/fastcgi_temp /tmp/uwsgi_temp /tmp/scgi_temp && \
+    touch /tmp/nginx.pid /tmp/nginx_error.log /tmp/nginx_access.log && \
+    chown nextjs:nodejs /tmp/nginx.pid /tmp/nginx_error.log /tmp/nginx_access.log
+
 # Copy nginx configuration
 COPY apps/web/nginx.conf /etc/nginx/nginx.conf
 
