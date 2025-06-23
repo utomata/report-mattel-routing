@@ -102,14 +102,18 @@ class ChainAnalysis(BaseModel):
 class StoreChainAnalysis(BaseModel):
     chains: List[ChainAnalysis]
 
-class SalesRange(BaseModel):
-    range: str
-    store_count: int
+class TopStore(BaseModel):
+    store_id: str
+    name: str
+    sales: int
     weekly_visits: int
-    avg_sales: float
+    min_weekly_visits: int
+    max_weekly_visits: int
+    coverage_status: str
+    chain: str
 
-class SalesRangeAnalysis(BaseModel):
-    sales_ranges: List[SalesRange]
+class TopStoresAnalysis(BaseModel):
+    top_stores: List[TopStore]
 
 class HourlyDistribution(BaseModel):
     hour: str
@@ -179,6 +183,10 @@ def load_data():
         # Load workers data
         workers_df = pd.read_csv('data/workers.csv')
         
+        # Ensure 'activos' column is loaded as integer
+        if 'activos' in workers_df.columns:
+            workers_df['activos'] = workers_df['activos'].astype(int)
+
         # Parse worker location coordinates
         workers_df[['home_latitude', 'home_longitude']] = workers_df['home_location'].str.split(',', expand=True).astype(float)
         
@@ -278,7 +286,10 @@ def get_agent_performance_metrics():
     """Get detailed performance metrics for each field agent"""
     agent_performance = []
     
-    for _, worker in workers_df.iterrows():
+    # Filter for active agents only
+    active_workers = workers_df[workers_df['activos'] == 1] if 'activos' in workers_df.columns else workers_df
+    
+    for _, worker in active_workers.iterrows():
         agent_id = worker['worker_id']
         agent_name = worker['name']
         
@@ -351,44 +362,36 @@ def get_store_chain_analysis():
     
     return chains
 
-def get_sales_range_analysis():
-    """Get visit allocation based on store sales performance"""
-    # Define sales ranges
-    sales_ranges = [
-        (0, 1000000, "$0-$1M"),
-        (1000000, 2000000, "$1M-$2M"),
-        (2000000, 5000000, "$2M-$5M"),
-        (5000000, 10000000, "$5M-$10M"),
-        (10000000, float('inf'), "$10M+")
-    ]
+def get_top_stores_by_volume():
+    """Get top 10 stores by sales volume with visit information"""
+    # Count visits per store
+    store_visits = result_df['store_id_destination'].value_counts().to_dict()
     
-    range_stats = []
+    # Get top 10 stores by sales
+    top_stores = stores_df.nlargest(10, 'sales')
     
-    for min_sales, max_sales, range_label in sales_ranges:
-        if max_sales == float('inf'):
-            stores_in_range = stores_df[stores_df['sales'] >= min_sales]
-        else:
-            stores_in_range = stores_df[(stores_df['sales'] >= min_sales) & (stores_df['sales'] < max_sales)]
+    # Build analysis
+    top_stores_analysis = []
+    for _, store in top_stores.iterrows():
+        store_id = store['id']
+        weekly_visits = store_visits.get(store_id, 0)
         
-        store_count = len(stores_in_range)
+        # Calculate coverage status
+        min_visits = store['min_weekly_visits']
+        coverage_status = 'Óptima' if weekly_visits >= min_visits else 'Insuficiente'
         
-        # Count visits to stores in this range
-        weekly_visits = 0
-        for _, visit in result_df.iterrows():
-            store_id = visit['store_id_destination']
-            if store_id in stores_in_range['id'].values:
-                weekly_visits += 1
-        
-        avg_sales = stores_in_range['sales'].mean() if store_count > 0 else 0
-        
-        range_stats.append({
-            'range': range_label,
-            'store_count': store_count,
+        top_stores_analysis.append({
+            'store_id': store_id,
+            'name': store['store'],
+            'sales': int(store['sales']),
             'weekly_visits': weekly_visits,
-            'avg_sales': round(avg_sales, 0)
+            'min_weekly_visits': int(min_visits),
+            'max_weekly_visits': int(store['max_weekly_visits']),
+            'coverage_status': coverage_status,
+            'chain': store['store'].split(',')[0] if ',' in store['store'] else store['store']
         })
     
-    return range_stats
+    return top_stores_analysis
 
 def get_visit_time_distribution():
     """Get hourly distribution of store visits"""
@@ -433,7 +436,10 @@ def get_agents_data():
     """Get all field agent locations and assignments"""
     agents = []
     
-    for _, worker in workers_df.iterrows():
+    # Filter for active agents only
+    active_workers = workers_df[workers_df['activos'] == 1] if 'activos' in workers_df.columns else workers_df
+    
+    for _, worker in active_workers.iterrows():
         # Get assigned routes (simplified - just count visits)
         agent_visits = result_df[result_df['worker_id'] == worker['worker_id']]
         assigned_routes = [f"route_{i+1}" for i in range(len(agent_visits))]
@@ -486,30 +492,45 @@ def get_routes_data(process_type: str):
 # Load data on startup
 @app.on_event("startup")
 async def startup_event():
+    """Load data on application startup"""
     load_data()
 
-# Dashboard APIs
 @app.get("/api/dashboard/kpis", response_model=KPIMetrics)
 async def get_dashboard_kpis():
-    """Get key performance indicators for the dashboard"""
+    """
+    Provides key performance indicators for the dashboard.
+    """
+    if stores_df is None or workers_df is None or manual_df is None or result_df is None:
+        raise HTTPException(status_code=500, detail="Data not loaded")
+
     total_stores = len(stores_df)
-    active_agents = len(workers_df)
-    weekly_visits_manual = len(manual_df)
-    weekly_visits_optimized = len(result_df)
     
-    # Calculate average service time
-    avg_service_time = result_df['service_min'].mean()
+    # Filter for active agents
+    active_agents = len(workers_df[workers_df['activos'] == 1]) if 'activos' in workers_df.columns else len(workers_df)
     
-    # Calculate total sales coverage
-    total_sales_coverage = stores_df['sales'].sum()
+    manual_visits = len(manual_df)
+    optimized_visits = len(result_df)
+    
+    # Calculate average service time from optimized results
+    if not result_df.empty and 'service_min' in result_df.columns:
+        avg_service_time = result_df['service_min'].mean()
+    else:
+        avg_service_time = 0.0
+    
+    # Calculate sales coverage for optimized process (stores actually visited)
+    if not result_df.empty and 'store_id_destination' in result_df.columns:
+        visited_stores = result_df['store_id_destination'].unique()
+        visited_stores_sales = stores_df[stores_df['id'].isin(visited_stores)]['sales'].sum()
+    else:
+        visited_stores_sales = 0
     
     return KPIMetrics(
         total_stores=total_stores,
         active_agents=active_agents,
-        weekly_visits_manual=weekly_visits_manual,
-        weekly_visits_optimized=weekly_visits_optimized,
-        avg_service_time=round(avg_service_time, 1),
-        total_sales_coverage=total_sales_coverage
+        weekly_visits_manual=manual_visits,
+        weekly_visits_optimized=optimized_visits,
+        avg_service_time=round(avg_service_time, 2),
+        total_sales_coverage=int(visited_stores_sales)
     )
 
 @app.get("/api/dashboard/efficiency-comparison", response_model=EfficiencyComparison)
@@ -626,21 +647,172 @@ async def get_store_chain_analysis_endpoint():
     
     return StoreChainAnalysis(chains=chain_analysis)
 
-@app.get("/api/coverage/sales-range-analysis", response_model=SalesRangeAnalysis)
-async def get_sales_range_analysis_endpoint():
-    """Get visit allocation based on store sales performance"""
-    sales_ranges = get_sales_range_analysis()
+@app.get("/api/coverage/top-stores", response_model=TopStoresAnalysis)
+async def get_top_stores_endpoint():
+    """Get top 10 stores by sales volume with visit information"""
+    top_stores = get_top_stores_by_volume()
     
-    range_analysis = []
-    for range_data in sales_ranges:
-        range_analysis.append(SalesRange(
-            range=range_data['range'],
-            store_count=range_data['store_count'],
-            weekly_visits=range_data['weekly_visits'],
-            avg_sales=range_data['avg_sales']
+    stores_analysis = []
+    for store_data in top_stores:
+        stores_analysis.append(TopStore(
+            store_id=store_data['store_id'],
+            name=store_data['name'],
+            sales=store_data['sales'],
+            weekly_visits=store_data['weekly_visits'],
+            min_weekly_visits=store_data['min_weekly_visits'],
+            max_weekly_visits=store_data['max_weekly_visits'],
+            coverage_status=store_data['coverage_status'],
+            chain=store_data['chain']
         ))
     
-    return SalesRangeAnalysis(sales_ranges=range_analysis)
+    return TopStoresAnalysis(top_stores=stores_analysis)
+
+@app.get("/api/coverage/chain-stores/{chain_name}")
+async def get_chain_stores(chain_name: str):
+    """Get detailed store information for a specific chain with daily visit schedule"""
+    # Extract chain names from stores
+    stores_with_chains = stores_df.copy()
+    stores_with_chains['chain'] = stores_with_chains['store'].str.split(',').str[0]
+    
+    # Filter stores by chain
+    chain_stores = stores_with_chains[stores_with_chains['chain'] == chain_name]
+    
+    # Count visits per store and day
+    store_daily_visits = {}
+    days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    
+
+    
+    for _, visit in result_df.iterrows():
+        store_id = visit['store_id_destination']
+        day = visit['day'] if 'day' in visit else None
+        
+        if store_id not in store_daily_visits:
+            store_daily_visits[store_id] = {d: 0 for d in days_order}
+        
+        # Map day names if they're different
+        day_mapping = {
+            'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday', 'thu': 'Thursday', 
+            'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
+            'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
+            'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday',
+            'lunes': 'Monday', 'martes': 'Tuesday', 'miércoles': 'Wednesday', 'miercoles': 'Wednesday',
+            'jueves': 'Thursday', 'viernes': 'Friday', 'sábado': 'Saturday', 'sabado': 'Saturday', 'domingo': 'Sunday'
+        }
+        
+        if day:
+            mapped_day = day_mapping.get(day.lower(), day)
+            if mapped_day in store_daily_visits[store_id]:
+                store_daily_visits[store_id][mapped_day] += 1
+    
+    # Build response
+    stores_detail = []
+    for _, store in chain_stores.iterrows():
+        store_id = store['id']
+        daily_visits = store_daily_visits.get(store_id, {day: 0 for day in days_order})
+        weekly_visits = sum(daily_visits.values())
+        
+        stores_detail.append({
+            'store_id': store_id,
+            'name': store['store'],
+            'sales': int(store['sales']),
+            'weekly_visits': weekly_visits,
+            'min_weekly_visits': int(store['min_weekly_visits']),
+            'max_weekly_visits': int(store['max_weekly_visits']),
+            'coverage_status': 'Óptima' if weekly_visits >= store['min_weekly_visits'] else 'Insuficiente',
+            'daily_visits': daily_visits,
+            'latitude': float(store['latitude']),
+            'longitude': float(store['longitude'])
+        })
+    
+    # Sort by sales descending
+    stores_detail.sort(key=lambda x: x['sales'], reverse=True)
+    
+    return {
+        'chain': chain_name,
+        'total_stores': len(stores_detail),
+        'stores': stores_detail
+    }
+
+@app.get("/api/coverage/agent-stores/{agent_name}")
+async def get_agent_stores(agent_name: str):
+    """Get detailed store information for a specific agent with daily visit schedule"""
+    # Get agent visits from result_df
+    agent_visits = result_df[result_df['worker_name'] == agent_name] if 'worker_name' in result_df.columns else pd.DataFrame()
+    
+    if agent_visits.empty:
+        # Try with worker_id if worker_name doesn't exist
+        # First get the worker_id for this agent name
+        agent_row = workers_df[workers_df['name'] == agent_name]
+        if not agent_row.empty:
+            worker_id = agent_row.iloc[0]['worker_id']
+            agent_visits = result_df[result_df['worker_id'] == worker_id]
+    
+    if agent_visits.empty:
+        return {
+            'agent': agent_name,
+            'total_stores': 0,
+            'stores': []
+        }
+    
+    # Get unique stores visited by this agent
+    visited_store_ids = agent_visits['store_id_destination'].unique()
+    visited_stores = stores_df[stores_df['id'].isin(visited_store_ids)]
+    
+    # Count visits per store and day
+    store_daily_visits = {}
+    days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    
+    for _, visit in agent_visits.iterrows():
+        store_id = visit['store_id_destination']
+        day = visit['day'] if 'day' in visit else None
+        
+        if store_id not in store_daily_visits:
+            store_daily_visits[store_id] = {d: 0 for d in days_order}
+        
+        # Map day names if they're different
+        day_mapping = {
+            'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday', 'thu': 'Thursday', 
+            'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
+            'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
+            'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday',
+            'lunes': 'Monday', 'martes': 'Tuesday', 'miércoles': 'Wednesday', 'miercoles': 'Wednesday',
+            'jueves': 'Thursday', 'viernes': 'Friday', 'sábado': 'Saturday', 'sabado': 'Saturday', 'domingo': 'Sunday'
+        }
+        
+        if day:
+            mapped_day = day_mapping.get(day.lower(), day)
+            if mapped_day in store_daily_visits[store_id]:
+                store_daily_visits[store_id][mapped_day] += 1
+    
+    # Build response
+    stores_detail = []
+    for _, store in visited_stores.iterrows():
+        store_id = store['id']
+        daily_visits = store_daily_visits.get(store_id, {day: 0 for day in days_order})
+        weekly_visits = sum(daily_visits.values())
+        
+        stores_detail.append({
+            'store_id': store_id,
+            'name': store['store'],
+            'sales': int(store['sales']),
+            'weekly_visits': weekly_visits,
+            'min_weekly_visits': int(store['min_weekly_visits']),
+            'max_weekly_visits': int(store['max_weekly_visits']),
+            'coverage_status': 'Óptima' if weekly_visits >= store['min_weekly_visits'] else 'Insuficiente',
+            'daily_visits': daily_visits,
+            'latitude': float(store['latitude']),
+            'longitude': float(store['longitude'])
+        })
+    
+    # Sort by sales descending
+    stores_detail.sort(key=lambda x: x['sales'], reverse=True)
+    
+    return {
+        'agent': agent_name,
+        'total_stores': len(stores_detail),
+        'stores': stores_detail
+    }
 
 @app.get("/api/coverage/visit-time-distribution", response_model=VisitTimeDistribution)
 async def get_visit_time_distribution_endpoint():

@@ -1,20 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { Clock, MapPin, TrendingUp, Users, Store, Target, AlertCircle } from 'lucide-react';
+import { AlertCircle, Eye, Store, TrendingUp, Target, BarChart3, MapPin, DollarSign } from 'lucide-react';
 import { useCoverageData } from '@/hooks/use-coverage';
+import { useChainStores } from '@/hooks/use-chain-stores';
+import { useAgentStores } from '@/hooks/use-agent-stores';
+
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
 const Coverage = () => {
+  const [selectedChain, setSelectedChain] = useState<string | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  
   const { 
     agentPerformance, 
     storeChainAnalysis, 
-    salesRangeAnalysis, 
-    visitTimeDistribution, 
     isLoading, 
     isError, 
     error 
   } = useCoverageData();
+
+  const { 
+    stores: chainStores, 
+    isLoading: isLoadingStores, 
+    error: storesError 
+  } = useChainStores(selectedChain);
+
+  const { 
+    stores: agentStores, 
+    isLoading: isLoadingAgentStores, 
+    error: agentStoresError 
+  } = useAgentStores(selectedAgent);
+
+
 
   if (isLoading) {
     return (
@@ -23,25 +51,13 @@ const Coverage = () => {
           <Skeleton className="h-8 w-64 mb-2" />
           <Skeleton className="h-4 w-full" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="space-y-6">
+          {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Skeleton className="h-5 w-32 mb-2" />
-                    <Skeleton className="h-8 w-24 mb-2" />
-                    <Skeleton className="h-4 w-40" />
-                  </div>
-                  <Skeleton className="w-12 h-12 rounded-full" />
-                </div>
-              </CardContent>
+              <CardHeader><Skeleton className="h-6 w-48" /></CardHeader>
+              <CardContent><Skeleton className="h-72 w-full" /></CardContent>
             </Card>
           ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card><CardHeader><Skeleton className="h-6 w-48" /></CardHeader><CardContent><Skeleton className="h-72 w-full" /></CardContent></Card>
-          <Card><CardHeader><Skeleton className="h-6 w-48" /></CardHeader><CardContent><Skeleton className="h-72 w-full" /></CardContent></Card>
         </div>
       </div>
     );
@@ -66,7 +82,7 @@ const Coverage = () => {
 
   // Process data from API
   const agentPerformanceData = agentPerformance?.agents.map(agent => ({
-    name: agent.name.split(',')[0], // Use a shorter name
+    name: agent.name,
     storeTime: agent.store_time_percentage,
     travelTime: agent.travel_time_percentage,
     adminTime: agent.admin_time_percentage,
@@ -81,199 +97,21 @@ const Coverage = () => {
     coverage: chain.coverage_ratio
   })) || [];
   
-  const salesRangeData = salesRangeAnalysis?.sales_ranges.map(range => ({
-    range: range.range,
-    stores: range.store_count,
-    weeklyVisits: range.weekly_visits,
-    avgSales: range.avg_sales,
-  })) || [];
 
-  const visitTimeData = visitTimeDistribution?.hourly_distribution.map(hour => ({
-    hour: hour.hour,
-    visits: hour.visit_count,
-  })) || [];
-  
-  const totalWeeklyVisits = agentPerformance?.agents.reduce((sum, agent) => sum + agent.weekly_visits, 0) || 0;
-  const avgStoreTime = agentPerformance?.agents.reduce((sum, agent) => sum + agent.store_time_percentage, 0) / (agentPerformance?.agents.length || 1) || 0;
-  
-  // Métricas actuales del sistema
-  const coverageMetrics = [
-    { title: 'Cobertura de Tiendas', value: '100%', change: `${storeChainAnalysis?.chains.reduce((sum, c) => sum + c.total_stores, 0)} tiendas`, icon: Store },
-    { title: 'Visitas Semanales', value: totalWeeklyVisits, change: 'Carga optimizada', icon: Target },
-    { title: 'Agentes Activos', value: agentPerformance?.agents.length || 0, change: 'Todos operativos', icon: Users },
-    { title: 'Tiempo Promedio en Tienda %', value: `${avgStoreTime.toFixed(1)}%`, change: 'Del tiempo de trabajo del agente', icon: Clock },
-    { title: 'Alcance Geográfico', value: 'MTY+', change: 'Área metropolitana', icon: MapPin },
-    { title: 'Eficiencia del Sistema', value: '89%', change: 'Rendimiento actual', icon: TrendingUp },
-  ];
-
-  // Distribución de tiempo actual
-  const timeDistribution = [
-    { name: 'Servicio en Tienda', value: avgStoreTime, color: '#3000CC' },
-    { name: 'Tiempo de Viaje', value: 100 - avgStoreTime, color: '#5B21B6' },
-  ];
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Análisis de Cobertura</h1>
-        <p className="text-gray-600 mt-2">Análisis en tiempo real del rendimiento de agentes de campo, cobertura de tiendas y eficiencia operativa en la red de tiendas optimizada de Mattel</p>
+        <p className="text-gray-600 mt-2">Análisis detallado del rendimiento de agentes, cobertura de tiendas y distribución por volumen de ventas</p>
       </div>
 
-      {/* Coverage Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {coverageMetrics.map((metric, index) => {
-          const Icon = metric.icon;
-          return (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{metric.value}</p>
-                    <p className="text-sm text-gray-500 mt-1">{metric.change}</p>
-                  </div>
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Agent Performance and Time Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Current Agent Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Estado del Rendimiento del Agente</CardTitle>
-            <p className="text-sm text-gray-600">Asignación actual de tiempo y visitas semanales por agente</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={agentPerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="storeTime" stackId="a" fill="#3000CC" name="Tiempo en Tienda %" />
-                <Bar dataKey="travelTime" stackId="a" fill="#5B21B6" name="Tiempo de Viaje %" />
-                <Bar dataKey="adminTime" stackId="a" fill="#A855F7" name="Tiempo Administrativo %" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* System Time Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Asignación de Tiempo del Sistema</CardTitle>
-            <p className="text-sm text-gray-600">Distribución actual del tiempo diario en todos los agentes</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={timeDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={120}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {timeDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex justify-center space-x-4 mt-4">
-              {timeDistribution.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-sm text-gray-600">{item.name}: {item.value.toFixed(1)}%</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Store Chain Coverage and Sales Analysis */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Current Store Chain Coverage */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cobertura por Cadena de Tiendas</CardTitle>
-            <p className="text-sm text-gray-600">Frecuencia actual de visitas por cadena de tiendas</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={storeChainCoverage}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="chain" angle={-45} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="stores" fill="#94A3B8" name="Total de Tiendas" />
-                <Bar dataKey="weeklyVisits" fill="#3000CC" name="Visitas Semanales" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Sales Volume Coverage */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cobertura por Volumen de Ventas</CardTitle>
-            <p className="text-sm text-gray-600">Asignación de visitas basada en el rendimiento de ventas de la tienda</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={salesRangeData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" />
-                <YAxis />
-                <Tooltip formatter={(value, name) => {
-                  if (name === 'weeklyVisits') return [value, 'Visitas Semanales'];
-                  if (name === 'stores') return [value, 'Número de Tiendas'];
-                  return [value, name];
-                }} />
-                <Area type="monotone" dataKey="stores" stroke="#94A3B8" fill="#F1F5F9" name="stores" />
-                <Area type="monotone" dataKey="weeklyVisits" stroke="#3000CC" fill="#E0E7FF" name="weeklyVisits" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Daily Visit Pattern */}
+      {/* Agent Performance Table - Priority 1 */}
       <Card>
         <CardHeader>
-          <CardTitle>Patrón de Visitas Diarias</CardTitle>
-          <p className="text-sm text-gray-600">Distribución horaria de visitas a tiendas durante el día</p>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={visitTimeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="hour" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="visits" stroke="#3000CC" strokeWidth={3} name="Visitas a Tiendas" />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Agent Performance Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Resumen del Rendimiento del Agente</CardTitle>
-          <p className="text-sm text-gray-600">Métricas de rendimiento actuales para todos los agentes de campo</p>
+          <CardTitle>Rendimiento del Agente</CardTitle>
+          <p className="text-sm text-gray-600">Métricas de rendimiento para todos los agentes de campo activos</p>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -285,6 +123,7 @@ const Coverage = () => {
                   <th className="text-center py-3 px-4">Tiempo en Tienda %</th>
                   <th className="text-center py-3 px-4">Tiempo de Viaje %</th>
                   <th className="text-center py-3 px-4">Rendimiento</th>
+                  <th className="text-center py-3 px-4">Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -307,6 +146,17 @@ const Coverage = () => {
                          agent.efficiencyRating}
                       </span>
                     </td>
+                    <td className="text-center py-3 px-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedAgent(agent.name)}
+                        className="flex items-center justify-center space-x-1 mx-auto"
+                      >
+                        <Eye className="w-3 h-3" />
+                        <span>Ver</span>
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -314,6 +164,368 @@ const Coverage = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Store Chain Performance Table - Priority 2 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Rendimiento de Cadenas</CardTitle>
+          <p className="text-sm text-gray-600">Métricas de cobertura y rendimiento por cadena de tiendas</p>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+                              <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">Cadena</th>
+                    <th className="text-center py-3 px-4">Total Tiendas</th>
+                    <th className="text-center py-3 px-4">Visitas Semanales</th>
+                    <th className="text-center py-3 px-4">Ratio Cobertura</th>
+                    <th className="text-center py-3 px-4">Estado</th>
+                    <th className="text-center py-3 px-4">Acción</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {storeChainCoverage.map((chain, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4 font-medium">{chain.chain}</td>
+                    <td className="text-center py-3 px-4">{chain.stores}</td>
+                    <td className="text-center py-3 px-4 text-blue-600 font-semibold">{chain.weeklyVisits}</td>
+                    <td className="text-center py-3 px-4">{chain.coverage.toFixed(2)}</td>
+                    <td className="text-center py-3 px-4">
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        chain.coverage >= 1.0 ? 'bg-green-100 text-green-800' : 
+                        chain.coverage >= 0.8 ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {chain.coverage >= 1.0 ? 'Óptima' :
+                         chain.coverage >= 0.8 ? 'Buena' :
+                         'Mejorable'}
+                      </span>
+                    </td>
+                    <td className="text-center py-3 px-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedChain(chain.chain)}
+                        className="flex items-center justify-center space-x-1 mx-auto"
+                      >
+                        <Eye className="w-3 h-3" />
+                        <span>Ver</span>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Sheet for Chain Details */}
+      <Sheet open={!!selectedChain} onOpenChange={(open) => !open && setSelectedChain(null)}>
+        <SheetContent 
+          side="right" 
+          className="overflow-hidden [&]:!w-[1000px] [&]:!max-w-[1000px] [&]:!min-w-[1000px]"
+        >
+          <SheetHeader>
+            <SheetTitle className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Store className="w-5 h-5 mr-2" />
+                Calendario de Visitas - {selectedChain}
+              </div>
+              {!isLoadingStores && !storesError && (
+                <span className="text-sm font-normal text-gray-500">
+                  {chainStores.length} tiendas
+                </span>
+              )}
+            </SheetTitle>
+            <SheetDescription>
+              Programación semanal de visitas por tienda - Ordenadas por volumen de ventas
+            </SheetDescription>
+          </SheetHeader>
+          <div className="py-6 max-h-[calc(100vh-180px)] overflow-y-auto">
+            {isLoadingStores ? (
+              <div className="space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            ) : storesError ? (
+              <div className="text-red-600 text-center py-8">
+                Error al cargar las tiendas: {storesError.message}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-3 px-4 font-semibold bg-gray-50 sticky left-0 z-10 min-w-[250px]">
+                        Tienda
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Lun
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Mar
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Mié
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Jue
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Vie
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-green-50 min-w-[80px]">
+                        Sáb
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-green-50 min-w-[80px]">
+                        Dom
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-gray-50 min-w-[80px]">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chainStores.map((store, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4 sticky left-0 z-10 bg-white border-r">
+                          <div className="font-medium text-gray-900">
+                            {store.name.includes(',') ? store.name.split(',').slice(1).join(',').trim() : store.name}
+                          </div>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Monday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Monday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Tuesday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Tuesday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Wednesday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Wednesday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Thursday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Thursday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Friday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Friday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Saturday > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Saturday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Sunday > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Sunday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4 border-l">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                            store.weekly_visits === 0 ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-800'
+                          }`}>
+                            {store.weekly_visits}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                {chainStores.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No se encontraron tiendas para esta cadena
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button variant="outline" className="w-full">Cerrar</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Sheet for Agent Details */}
+      <Sheet open={!!selectedAgent} onOpenChange={(open) => !open && setSelectedAgent(null)}>
+        <SheetContent 
+          side="right" 
+          className="overflow-hidden [&]:!w-[1000px] [&]:!max-w-[1000px] [&]:!min-w-[1000px]"
+        >
+          <SheetHeader>
+            <SheetTitle className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Store className="w-5 h-5 mr-2" />
+                Calendario de Visitas - {selectedAgent}
+              </div>
+              {!isLoadingAgentStores && !agentStoresError && (
+                <span className="text-sm font-normal text-gray-500">
+                  {agentStores.length} tiendas
+                </span>
+              )}
+            </SheetTitle>
+            <SheetDescription>
+              Programación semanal de visitas por tienda - Ordenadas por volumen de ventas
+            </SheetDescription>
+          </SheetHeader>
+          <div className="py-6 max-h-[calc(100vh-180px)] overflow-y-auto">
+            {isLoadingAgentStores ? (
+              <div className="space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            ) : agentStoresError ? (
+              <div className="text-red-600 text-center py-8">
+                Error al cargar las tiendas: {agentStoresError.message}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-3 px-4 font-semibold bg-gray-50 sticky left-0 z-10 min-w-[250px]">
+                        Tienda
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Lun
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Mar
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Mié
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Jue
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-blue-50 min-w-[80px]">
+                        Vie
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-green-50 min-w-[80px]">
+                        Sáb
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-green-50 min-w-[80px]">
+                        Dom
+                      </th>
+                      <th className="text-center py-3 px-4 font-semibold bg-gray-50 min-w-[80px]">
+                        Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {agentStores.map((store, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="py-3 px-4 sticky left-0 z-10 bg-white border-r">
+                          <div className="font-medium text-gray-900">
+                            {store.name.includes(',') ? store.name.split(',').slice(1).join(',').trim() : store.name}
+                          </div>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Monday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Monday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Tuesday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Tuesday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Wednesday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Wednesday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Thursday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Thursday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Friday > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Friday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Saturday > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Saturday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${
+                            store.daily_visits.Sunday > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {store.daily_visits.Sunday || '-'}
+                          </span>
+                        </td>
+                        <td className="text-center py-3 px-4 border-l">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                            store.weekly_visits === 0 ? 'bg-red-100 text-red-800' : 'bg-gray-200 text-gray-800'
+                          }`}>
+                            {store.weekly_visits}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                {agentStores.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No se encontraron tiendas para este agente
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button variant="outline" className="w-full">Cerrar</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+
     </div>
   );
 };

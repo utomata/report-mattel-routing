@@ -28,8 +28,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   className="w-10 h-10"
                 />
                 <div className="ml-3">
-                  <h1 className="text-xl font-bold text-gray-900">Optimizador de Rutas</h1>
-                  <p className="text-sm text-gray-500">Análisis de Optimización de Rutas</p>
+                        <h1 className="text-xl font-bold text-gray-900">Optimizado con Utomata</h1>
+      <p className="text-sm text-gray-500">Sistema de Optimización de Rutas</p>
                 </div>
               </div>
             </div>

@@ -136,7 +136,7 @@ const Maps = () => {
             <div>
               <CardTitle className="flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-                Mapa de Rutas Optimizadas
+                Mapa de Rutas Optimizado con Utomata
               </CardTitle>
               <p className="text-sm text-gray-500 mt-1">
                 Mostrando {filteredRoutes.length} de {routesData?.routes.length || 0} rutas totales.

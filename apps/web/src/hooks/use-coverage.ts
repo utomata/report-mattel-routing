@@ -19,11 +19,17 @@ export const useStoreChainAnalysis = () => {
   });
 };
 
-// Sales Range Analysis
-export const useSalesRangeAnalysis = () => {
+// Top Stores Analysis
+export const useTopStoresAnalysis = () => {
   return useQuery({
-    queryKey: ['coverage', 'sales-range-analysis'],
-    queryFn: () => apiService.getSalesRangeAnalysis(),
+    queryKey: ['coverage', 'top-stores'],
+    queryFn: async () => {
+      const response = await fetch('http://127.0.0.1:8000/api/coverage/top-stores');
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+      return response.json();
+    },
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -41,28 +47,23 @@ export const useVisitTimeDistribution = () => {
 export const useCoverageData = () => {
   const agentPerformanceQuery = useAgentPerformance();
   const storeChainAnalysisQuery = useStoreChainAnalysis();
-  const salesRangeAnalysisQuery = useSalesRangeAnalysis();
   const visitTimeDistributionQuery = useVisitTimeDistribution();
 
   return {
     agentPerformance: agentPerformanceQuery.data,
     storeChainAnalysis: storeChainAnalysisQuery.data,
-    salesRangeAnalysis: salesRangeAnalysisQuery.data,
     visitTimeDistribution: visitTimeDistributionQuery.data,
     isLoading:
       agentPerformanceQuery.isLoading ||
       storeChainAnalysisQuery.isLoading ||
-      salesRangeAnalysisQuery.isLoading ||
       visitTimeDistributionQuery.isLoading,
     isError:
       agentPerformanceQuery.isError ||
       storeChainAnalysisQuery.isError ||
-      salesRangeAnalysisQuery.isError ||
       visitTimeDistributionQuery.isError,
     error:
       agentPerformanceQuery.error ||
       storeChainAnalysisQuery.error ||
-      salesRangeAnalysisQuery.error ||
       visitTimeDistributionQuery.error,
   };
 }; 

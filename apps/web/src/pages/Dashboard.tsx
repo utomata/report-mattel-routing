@@ -1,21 +1,12 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Users, MapPin, DollarSign, Clock, Target, AlertCircle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, Users, MapPin, DollarSign, Clock, Target, AlertCircle, Activity } from 'lucide-react';
 import { useDashboardData } from '@/hooks/use-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Dashboard = () => {
-  const { kpis, efficiencyComparison, storeChainDistribution, isLoading, isError, error } = useDashboardData();
-
-  const dayNameMap: { [key: string]: string } = {
-    Monday: 'Lunes',
-    Tuesday: 'Martes',
-    Wednesday: 'Miércoles',
-    Thursday: 'Jueves',
-    Friday: 'Viernes',
-    Saturday: 'Sábado',
-  };
+  const { kpis, isLoading, isError, error } = useDashboardData();
 
   // Loading state
   if (isLoading) {
@@ -61,43 +52,32 @@ const Dashboard = () => {
     );
   }
 
-  // Format KPI data
+  // Calculate utilization rate (from your data: 98.40%)
+  const utilizationRate = 98.4;
+
+  // Format KPI data - only current optimized state
   const kpiData = kpis ? [
     { title: 'Tiendas Totales', value: kpis.total_stores.toString(), change: 'Red de minoristas Mattel', icon: MapPin },
-    { title: 'Agentes de Campo Activos', value: kpis.active_agents.toString(), change: 'Todos operativos', icon: Users },
-    { title: 'Visitas Semanales (Optimizadas)', value: kpis.weekly_visits_optimized.toString(), change: 'Rutas optimizadas por IA', icon: Target },
-    { title: 'Visitas Semanales (Manual)', value: kpis.weekly_visits_manual.toString(), change: 'Proceso manual anterior', icon: TrendingUp },
-    { title: 'Tiempo Promedio de Servicio', value: `${kpis.avg_service_time}h`, change: 'Por visita a tienda', icon: Clock },
-    { title: 'Cobertura Total de Ventas', value: `$${(kpis.total_sales_coverage / 1000000).toFixed(0)}M`, change: 'Ventas anuales de tiendas', icon: DollarSign },
+    { title: 'Agentes de Campo Activos', value: kpis.active_agents.toString(), change: 'Equipo operativo en campo', icon: Users },
+            { title: 'Visitas Semanales', value: kpis.weekly_visits_optimized.toString(), change: 'Optimizado con Utomata', icon: Target },
+    { title: 'Tiempo Promedio de Servicio', value: `${Math.round(kpis.avg_service_time)} min`, change: 'Por visita a tienda', icon: Clock },
+    { title: 'Cobertura de Ventas', value: `$${(kpis.total_sales_coverage / 1000000).toFixed(1)}M`, change: 'Valor de ventas de tiendas cubiertas', icon: DollarSign },
+    { title: 'Utilización del Equipo', value: `${utilizationRate}%`, change: 'Eficiencia operativa del equipo', icon: Activity },
   ] : [];
 
-  // Format daily visits data
-  const dailyVisitsData = efficiencyComparison?.daily_comparison.map(day => ({
-    day: day.day,
-    manual: day.manual,
-    optimized: day.optimized,
-  })) || [];
-
-  // Calculate time distribution (simplified - you can enhance this with real data)
+  // Agent time distribution (example data for current optimized state)
   const timeDistribution = [
     { name: 'Servicio en Tienda', value: 67, color: '#3000CC' },
     { name: 'Tiempo de Viaje', value: 23, color: '#5B21B6' },
     { name: 'Administrativo', value: 10, color: '#A855F7' },
   ];
 
-  // Format store chain performance
-  const storeChainPerformance = storeChainDistribution?.chains.map(chain => ({
-    chain: chain.chain,
-    visits: chain.count,
-    efficiency: Math.round((chain.count / (storeChainDistribution.chains.reduce((sum, c) => sum + c.count, 0))) * 100),
-  })) || [];
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Panel de Optimización de Rutas Mattel</h1>
-        <p className="text-gray-600 mt-2">Análisis en tiempo real para operaciones de campo optimizadas en {kpis?.total_stores || 0} ubicaciones de tiendas en el área metropolitana de Monterrey</p>
+        <p className="text-gray-600 mt-2">Estado actual del sistema optimizado para {kpis?.total_stores || 0} tiendas en el área metropolitana de Monterrey</p>
       </div>
 
       {/* KPI Cards */}
@@ -123,33 +103,12 @@ const Dashboard = () => {
         })}
       </div>
 
-      {/* Charts Section */}
+      {/* Agent Time Distribution Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Visits Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribución Diaria de Visitas</CardTitle>
-            <p className="text-sm text-gray-600">Comparación de carga de trabajo diaria Manual vs Optimizada</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dailyVisitsData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" tickFormatter={(day) => dayNameMap[day as keyof typeof dayNameMap] || day} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="manual" fill="#E0E7FF" name="Proceso Manual" />
-                <Bar dataKey="optimized" fill="#3000CC" name="Proceso Optimizado" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Agent Time Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Asignación de Tiempo del Agente de Campo</CardTitle>
-            <p className="text-sm text-gray-600">Distribución optimizada del tiempo diario</p>
+            <CardTitle>Distribución de Tiempo del Agente</CardTitle>
+            <p className="text-sm text-gray-600">Asignación optimizada del tiempo diario por agente</p>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -180,58 +139,37 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* System Performance Insights */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Estado del Sistema</CardTitle>
+            <p className="text-sm text-gray-600">Información clave del sistema optimizado</p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h3 className="font-semibold text-green-800">Cobertura Completa</h3>
+                <p className="text-sm text-green-700 mt-2">
+                  Todas las {kpis?.total_stores || 0} tiendas en el área metropolitana de Monterrey están cubiertas por el sistema optimizado.
+                </p>
+              </div>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h3 className="font-semibold text-blue-800">Equipo Optimizado</h3>
+                <p className="text-sm text-blue-700 mt-2">
+                  {kpis?.active_agents || 0} agentes activos con distribución de carga de trabajo optimizada y rutas eficientes.
+                </p>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <h3 className="font-semibold text-purple-800">Rendimiento del Sistema</h3>
+                <p className="text-sm text-purple-700 mt-2">
+                  Sistema ejecutando {kpis?.weekly_visits_optimized || 0} visitas semanales con tiempo promedio de {Math.round(kpis?.avg_service_time || 0)} minutos por tienda.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Store Chain Performance */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Distribución de Tiendas por Cadena</CardTitle>
-          <p className="text-sm text-gray-600">Número de tiendas y porcentaje por cadena de tiendas</p>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={storeChainPerformance} layout="horizontal">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="chain" type="category" width={120} />
-              <Tooltip />
-              <Bar dataKey="visits" fill="#3000CC" name="Número de Tiendas" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Performance Insights */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Información sobre el Rendimiento del Sistema</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <h3 className="font-semibold text-green-800">Impacto de la Optimización</h3>
-              <p className="text-sm text-green-700 mt-2">
-                {kpis && kpis.weekly_visits_manual > kpis.weekly_visits_optimized 
-                  ? `${Math.round(((kpis.weekly_visits_manual - kpis.weekly_visits_optimized) / kpis.weekly_visits_manual) * 100)}% de reducción en visitas semanales`
-                  : 'Eficiencia mejorada lograda'
-                }
-              </p>
-            </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-800">Cobertura Completa</h3>
-              <p className="text-sm text-blue-700 mt-2">
-                Todas las {kpis?.total_stores || 0} tiendas en el área metropolitana de Monterrey completamente cubiertas
-              </p>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <h3 className="font-semibold text-purple-800">Utilización de Agentes</h3>
-              <p className="text-sm text-purple-700 mt-2">
-                {kpis?.active_agents || 0} agentes activos con distribución de carga de trabajo optimizada
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

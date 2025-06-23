@@ -91,16 +91,7 @@ export interface StoreChainAnalysis {
   chains: ChainAnalysis[];
 }
 
-export interface SalesRange {
-  range: string;
-  store_count: number;
-  weekly_visits: number;
-  avg_sales: number;
-}
 
-export interface SalesRangeAnalysis {
-  sales_ranges: SalesRange[];
-}
 
 export interface HourlyDistribution {
   hour: string;
@@ -209,9 +200,7 @@ class ApiService {
     return this.request<StoreChainAnalysis>('/api/coverage/store-chain-analysis');
   }
 
-  async getSalesRangeAnalysis(): Promise<SalesRangeAnalysis> {
-    return this.request<SalesRangeAnalysis>('/api/coverage/sales-range-analysis');
-  }
+
 
   async getVisitTimeDistribution(): Promise<VisitTimeDistribution> {
     return this.request<VisitTimeDistribution>('/api/coverage/visit-time-distribution');
@@ -254,7 +243,6 @@ export const API_ENDPOINTS = {
   coverage: {
     agentPerformance: '/api/coverage/agent-performance',
     storeChainAnalysis: '/api/coverage/store-chain-analysis',
-    salesRangeAnalysis: '/api/coverage/sales-range-analysis',
     visitTimeDistribution: '/api/coverage/visit-time-distribution',
   },
   maps: {
