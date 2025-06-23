@@ -4,6 +4,7 @@ steps:
     args: [
       'build',
       '--build-arg', 'BUILDKIT_INLINE_CACHE=1',
+      '--build-arg', 'VITE_API_BASE_URL=',
       '-f', 'apps/web/Dockerfile',
       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
       '.'
