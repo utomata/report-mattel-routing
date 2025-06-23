@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { StoreLocation, RouteVisit } from '@/lib/api';
 import { DataTable } from '@/components/route-table/data-table';
 import { columns, RouteVisitRow } from '@/components/route-table/columns';
+import { Polyline } from '@/components/Polyline';
 
 const DAY_COLORS: { [key: string]: string } = {
   'mon': '#E53935', // Red
@@ -218,6 +219,33 @@ const Maps = () => {
                   </AdvancedMarker>
                 })
               )}
+
+              {/* Polylines connecting stores in each route */}
+              {filteredRoutes.map(route => {
+                const routePath: google.maps.LatLngLiteral[] = [];
+                
+                // Build the path by connecting stores in order of visits
+                route.visits.forEach(visit => {
+                  const store = storesData?.stores.find(s => s.store_id === visit.store_id);
+                  if (store) {
+                    routePath.push({ lat: store.latitude, lng: store.longitude });
+                  }
+                });
+
+                if (routePath.length < 2) return null; // Need at least 2 points for a line
+
+                const color = DAY_COLORS[route.day.toLowerCase()] || DAY_COLORS.default;
+                
+                return (
+                  <Polyline
+                    key={`route-${route.agent_id}-${route.day}`}
+                    path={routePath}
+                    strokeColor={color}
+                    strokeOpacity={0.8}
+                    strokeWeight={3}
+                  />
+                );
+              })}
 
               {selectedStoreInfo && (
                 <InfoWindow
