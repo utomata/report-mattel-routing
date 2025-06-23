@@ -6,19 +6,23 @@ steps:
       - '-c'
       - |
         gcloud secrets versions access latest --secret="google-maps-api-key" > /workspace/google_maps_key.txt
+        echo "API Key retrieved: $(cat /workspace/google_maps_key.txt | cut -c1-10)..."
 
   # Build Web App image with unique tag
   - name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'build',
-      '--build-arg', 'BUILDKIT_INLINE_CACHE=1',
-      '--build-arg', 'VITE_API_BASE_URL=',
-      '--build-arg', 'VITE_GOOGLE_MAPS_API_KEY=$$(cat /workspace/google_maps_key.txt)',
-      '-f', 'apps/web/Dockerfile',
-      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:$SHORT_SHA',
-      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
-      '.'
-    ]
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        GOOGLE_MAPS_KEY=$(cat /workspace/google_maps_key.txt)
+        docker build \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --build-arg VITE_API_BASE_URL= \
+          --build-arg VITE_GOOGLE_MAPS_API_KEY="$$GOOGLE_MAPS_KEY" \
+          -f apps/web/Dockerfile \
+          -t us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:$SHORT_SHA \
+          -t us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest \
+          .
     env:
       - 'DOCKER_BUILDKIT=1'
 
@@ -66,6 +70,7 @@ steps:
       - |
         sed -i "s|web-app:latest|web-app:$SHORT_SHA|g" cloud-run.yaml
         sed -i "s|fastapi-app:latest|fastapi-app:$SHORT_SHA|g" cloud-run.yaml
+        echo "Updated cloud-run.yaml:"
         cat cloud-run.yaml
 
   # Deploy to Cloud Run
