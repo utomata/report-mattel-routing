@@ -7,7 +7,7 @@ steps:
       - |
         gcloud secrets versions access latest --secret="google-maps-api-key" > /workspace/google_maps_key.txt
 
-  # Build Web App image
+  # Build Web App image with unique tag
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
@@ -15,34 +15,58 @@ steps:
       '--build-arg', 'VITE_API_BASE_URL=',
       '--build-arg', 'VITE_GOOGLE_MAPS_API_KEY=$$(cat /workspace/google_maps_key.txt)',
       '-f', 'apps/web/Dockerfile',
+      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:$SHORT_SHA',
       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
       '.'
     ]
     env:
       - 'DOCKER_BUILDKIT=1'
 
-  # Build FastAPI image
+  # Build FastAPI image with unique tag
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
       '-f', 'apps/backend/Dockerfile',
+      '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:$SHORT_SHA',
       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest',
       '.'
     ]
 
-  # Push Web App image
+  # Push Web App images
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:$SHORT_SHA'
+    ]
+
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
       'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest'
     ]
 
-  # Push FastAPI image
+  # Push FastAPI images
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:$SHORT_SHA'
+    ]
+
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
       'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest'
     ]
+
+  # Update cloud-run.yaml with specific image tags
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        sed -i "s|web-app:latest|web-app:$SHORT_SHA|g" cloud-run.yaml
+        sed -i "s|fastapi-app:latest|fastapi-app:$SHORT_SHA|g" cloud-run.yaml
+        cat cloud-run.yaml
 
   # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -58,7 +82,9 @@ steps:
 
 # Store images in Artifact Registry
 images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:$SHORT_SHA'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:$SHORT_SHA'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/fastapi-app:latest'
 
 # Service account for the build
