@@ -10,8 +10,8 @@ spec:
       annotations:
         # Container dependencies: web-app starts after fastapi
         run.googleapis.com/container-dependencies: "{web-app: [fastapi]}"
-        # CPU allocation
-        run.googleapis.com/cpu-throttling: "false"
+        # CPU allocation - request-based for cost optimization
+        run.googleapis.com/cpu-throttling: "true"
         # Execution environment
         run.googleapis.com/execution-environment: gen2
         # Force new revision
@@ -28,13 +28,18 @@ spec:
           containerPort: 8080
         resources:
           limits:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 500m
+            memory: 512Mi
         env:
         - name: NODE_ENV
           value: "production"
         - name: VITE_API_BASE_URL
           value: ""
+        - name: VITE_GOOGLE_MAPS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: google-maps-api-key
+              key: latest
       
       # FastAPI Backend - API service container
       - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/fastapi-app:latest
@@ -44,8 +49,8 @@ spec:
           value: "production"
         resources:
           limits:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 500m
+            memory: 512Mi
         startupProbe:
           httpGet:
             path: /health
