@@ -72,6 +72,19 @@ class AgentPerformance(BaseModel):
 class AgentPerformanceComparison(BaseModel):
     agents: List[AgentPerformance]
 
+class StorePerformance(BaseModel):
+    store_id: str
+    name: str
+    chain: str
+    sales: int
+    visits_before: int
+    visits_after: int
+    visit_change: int
+    coverage_status: str
+
+class StorePerformanceComparison(BaseModel):
+    stores: List[StorePerformance]
+
 class WeeklyDistribution(BaseModel):
     day: str
     before: int
@@ -217,8 +230,12 @@ def analyze_agent_workload():
     """Analyze agent workload distribution and efficiency"""
     agent_stats = []
     
-    for agent_id in workers_df['worker_id'].unique():
-        agent_name = workers_df[workers_df['worker_id'] == agent_id]['name'].iloc[0]
+    # Filter for active agents only
+    active_workers = workers_df[workers_df['activos'] == 1] if 'activos' in workers_df.columns else workers_df
+    
+    for _, worker in active_workers.iterrows():
+        agent_id = worker['worker_id']
+        agent_name = worker['name']
         
         # Get visits for this agent
         agent_manual_visits = len(manual_df[manual_df['worker_id'] == agent_id])
@@ -239,6 +256,53 @@ def analyze_agent_workload():
         })
     
     return agent_stats
+
+def analyze_store_performance():
+    """Analyze store performance comparison between manual and optimized processes"""
+    # Count visits per store in manual process
+    manual_store_visits = manual_df['store_id_destination'].value_counts().to_dict()
+    
+    # Count visits per store in optimized process
+    optimized_store_visits = result_df['store_id_destination'].value_counts().to_dict()
+    
+    store_stats = []
+    # Iterate through ALL stores in the system, not just those with visits
+    for _, store_row in stores_df.iterrows():
+        store_id = store_row['id']
+        visits_before = manual_store_visits.get(store_id, 0)
+        visits_after = optimized_store_visits.get(store_id, 0)
+        visit_change = visits_after - visits_before
+        
+        # Determine coverage status
+        min_visits = store_row['min_weekly_visits']
+        if min_visits == 0 and visits_after == 0:
+            # Store doesn't require visits and doesn't receive any
+            coverage_status = 'No Requerida'
+        elif visits_after >= min_visits and min_visits > 0:
+            # Store meets or exceeds required visits
+            coverage_status = 'Óptima'
+        elif visits_after > 0:
+            # Store receives some visits but not enough
+            coverage_status = 'Parcial'
+        else:
+            # Store requires visits but receives none
+            coverage_status = 'Sin Cobertura'
+        
+        store_stats.append({
+            'store_id': store_id,
+            'name': store_row['store'],
+            'chain': store_row['store'].split(',')[0] if ',' in store_row['store'] else store_row['store'],
+            'sales': int(store_row['sales']),
+            'visits_before': visits_before,
+            'visits_after': visits_after,
+            'visit_change': visit_change,
+            'coverage_status': coverage_status
+        })
+    
+    # Sort by sales descending to show most important stores first
+    store_stats.sort(key=lambda x: x['sales'], reverse=True)
+    
+    return store_stats
 
 def get_daily_visit_comparison():
     """Get daily visit comparison between manual and optimized processes"""
@@ -593,6 +657,26 @@ async def get_agent_performance_comparison():
         ))
     
     return AgentPerformanceComparison(agents=agents)
+
+@app.get("/api/comparison/store-performance", response_model=StorePerformanceComparison)
+async def get_store_performance_comparison():
+    """Get store-level comparison of visit counts and coverage"""
+    store_stats = analyze_store_performance()
+    
+    stores = []
+    for stat in store_stats:
+        stores.append(StorePerformance(
+            store_id=stat['store_id'],
+            name=stat['name'],
+            chain=stat['chain'],
+            sales=stat['sales'],
+            visits_before=stat['visits_before'],
+            visits_after=stat['visits_after'],
+            visit_change=stat['visit_change'],
+            coverage_status=stat['coverage_status']
+        ))
+    
+    return StorePerformanceComparison(stores=stores)
 
 @app.get("/api/comparison/weekly-distribution", response_model=WeeklyDistributionData)
 async def get_weekly_distribution():

@@ -55,6 +55,21 @@ export interface AgentPerformanceComparison {
   agents: AgentPerformance[];
 }
 
+export interface StorePerformance {
+  store_id: string;
+  name: string;
+  chain: string;
+  sales: number;
+  visits_before: number;
+  visits_after: number;
+  visit_change: number;
+  coverage_status: string;
+}
+
+export interface StorePerformanceComparison {
+  stores: StorePerformance[];
+}
+
 export interface WeeklyDistribution {
   day: string;
   before: number;
@@ -227,6 +242,10 @@ class ApiService {
 
   async getAgentPerformanceComparison(): Promise<AgentPerformanceComparison> {
     return this.request<AgentPerformanceComparison>('/api/comparison/agent-performance');
+  }
+
+  async getStorePerformanceComparison(): Promise<StorePerformanceComparison> {
+    return this.request<StorePerformanceComparison>('/api/comparison/store-performance');
   }
 
   async getWeeklyDistribution(): Promise<WeeklyDistributionData> {

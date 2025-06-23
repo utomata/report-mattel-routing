@@ -4,9 +4,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { TrendingUp, TrendingDown, Users, Clock, Target, AlertCircle } from 'lucide-react';
 import { useComparisonData } from '@/hooks/use-comparison';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DataTable } from '@/components/store-table/data-table';
+import { columns } from '@/components/store-table/columns';
+import { DataTable as AgentDataTable } from '@/components/agent-table/data-table';
+import { columns as agentColumns } from '@/components/agent-table/columns';
 
 const BeforeAfter = () => {
-  const { metrics, agentPerformance, weeklyDistribution, isLoading, isError, error } = useComparisonData();
+  const { metrics, agentPerformance, storePerformance, weeklyDistribution, isLoading, isError, error } = useComparisonData();
 
   const metricTranslations: { [key: string]: string } = {
     'Total Weekly Visits': 'Visitas Semanales Totales',
@@ -103,6 +107,17 @@ const BeforeAfter = () => {
     efficiency_gain: agent.efficiency_gain,
   })) || [];
 
+  // Format store performance data
+  const storeComparison = storePerformance?.stores.map(store => ({
+    store: store.name,
+    chain: store.chain,
+    sales: store.sales,
+    before: store.visits_before,
+    after: store.visits_after,
+    change: store.visit_change,
+    status: store.coverage_status,
+  })) || [];
+
   // Calculate performance radar data (simplified - you can enhance with real data)
   const performanceRadar = [
     { subject: 'Eficiencia de Visita', before: 72, after: 87 },
@@ -116,6 +131,10 @@ const BeforeAfter = () => {
   // Calculate summary metrics
   const totalVisitsBefore = metrics?.metrics.find(m => m.metric === 'Total Weekly Visits')?.before || 0;
   const totalVisitsAfter = metrics?.metrics.find(m => m.metric === 'Total Weekly Visits')?.after || 0;
+  const avgServiceTimeBefore = metrics?.metrics.find(m => m.metric === 'Average Service Time')?.before || 0;
+  const avgServiceTimeAfter = metrics?.metrics.find(m => m.metric === 'Average Service Time')?.after || 0;
+  const totalTravelTimeBefore = metrics?.metrics.find(m => m.metric === 'Total Travel Time')?.before || 0;
+  const totalTravelTimeAfter = metrics?.metrics.find(m => m.metric === 'Total Travel Time')?.after || 0;
   const visitReduction = totalVisitsBefore > 0 ? ((totalVisitsBefore - totalVisitsAfter) / totalVisitsBefore * 100) : 0;
   const avgEfficiencyGain = agentPerformance?.agents.reduce((sum, agent) => sum + agent.efficiency_gain, 0) / (agentPerformance?.agents.length || 1);
 
@@ -153,7 +172,14 @@ const BeforeAfter = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Cambio:</span>
                       <span className={`text-sm font-semibold ${isImprovement ? 'text-green-600' : 'text-red-600'}`}>
-                        {percentChange > 0 ? '+' : ''}{percentChange.toFixed(1)}%
+                        {metric.before > 0 ? (
+                          <>
+                            {((metric.after - metric.before) / metric.before * 100) > 0 ? '+' : ''}
+                            {(((metric.after - metric.before) / metric.before * 100)).toFixed(1)}%
+                          </>
+                        ) : (
+                          'N/A'
+                        )}
                       </span>
                     </div>
                   </div>
@@ -163,6 +189,32 @@ const BeforeAfter = () => {
           );
         })}
       </div>
+
+      {/* Key Improvements Summary - Moved to top */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Resumen del Impacto de la Optimización</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-6 bg-purple-50 rounded-lg">
+              <div className="text-3xl font-bold text-purple-600">+{totalVisitsAfter - totalVisitsBefore}</div>
+              <div className="text-sm text-purple-800 mt-2">Visitas Adicionales por Semana</div>
+              <div className="text-xs text-purple-700 mt-1">{totalVisitsBefore} → {totalVisitsAfter} visitas totales</div>
+            </div>
+            <div className="text-center p-6 bg-orange-50 rounded-lg">
+              <div className="text-3xl font-bold text-orange-600">-{avgServiceTimeBefore - avgServiceTimeAfter}min</div>
+              <div className="text-sm text-orange-800 mt-2">Menos Tiempo por Visita</div>
+              <div className="text-xs text-orange-700 mt-1">{avgServiceTimeBefore} → {avgServiceTimeAfter} minutos promedio</div>
+            </div>
+            <div className="text-center p-6 bg-blue-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">+{Math.round((totalTravelTimeAfter - totalTravelTimeBefore) / 60)}h</div>
+              <div className="text-sm text-blue-800 mt-2">Tiempo Total de Viaje</div>
+              <div className="text-xs text-blue-700 mt-1">{Math.round(totalTravelTimeBefore / 60)}h → {Math.round(totalTravelTimeAfter / 60)}h semanales</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -207,6 +259,10 @@ const BeforeAfter = () => {
         </Card>
       </div>
 
+
+
+
+
       {/* Agent Performance Comparison */}
       <Card>
         <CardHeader>
@@ -214,109 +270,18 @@ const BeforeAfter = () => {
           <p className="text-sm text-gray-600">Visitas semanales por agente: enrutamiento manual vs optimizado</p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4">Agente</th>
-                  <th className="text-center py-3 px-4">Proceso Manual</th>
-                  <th className="text-center py-3 px-4">Optimizado con Utomata</th>
-                  <th className="text-center py-3 px-4">Eficiencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agentComparison.map((agent, index) => {
-                  // The user considers a negative gain from the API as a positive outcome (less is more).
-                  const isGain = agent.efficiency_gain <= 0;
-                  const efficiencyValue = Math.abs(agent.efficiency_gain);
-                  
-                  return (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{agent.agent}</td>
-                      <td className="text-center py-3 px-4">{agent.before} visitas</td>
-                      <td className="text-center py-3 px-4 text-primary font-semibold">{agent.after} visitas</td>
-                      <td className={`text-center py-3 px-4 font-semibold ${isGain ? 'text-green-600' : 'text-red-600'}`}>
-                        {agent.efficiency_gain < 0 ? '+' : agent.efficiency_gain > 0 ? '-' : ''}{efficiencyValue.toFixed(1)}%
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <AgentDataTable columns={agentColumns} data={agentComparison} />
         </CardContent>
       </Card>
 
-      {/* Key Improvements Summary */}
+      {/* Store Performance Comparison */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumen del Impacto de la Optimización</CardTitle>
+          <CardTitle>Comparación del Rendimiento de Tiendas</CardTitle>
+          <p className="text-sm text-gray-600">Visitas semanales por tienda: enrutamiento manual vs optimizado</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-3xl font-bold text-green-600">{visitReduction.toFixed(0)}%</div>
-              <div className="text-sm text-green-800 mt-2">Menos Visitas Requeridas</div>
-              <div className="text-xs text-green-700 mt-1">{totalVisitsBefore} → {totalVisitsAfter} visitas semanales</div>
-            </div>
-            <div className="text-center p-6 bg-primary/10 rounded-lg">
-              <div className="text-3xl font-bold text-primary">100%</div>
-              <div className="text-sm text-primary/80 mt-2">Cobertura de Tiendas Mantenida</div>
-              <div className="text-xs text-primary/70 mt-1">Todas las tiendas cubiertas</div>
-            </div>
-            <div className="text-center p-6 bg-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-purple-600">+{avgEfficiencyGain.toFixed(0)}%</div>
-              <div className="text-sm text-purple-800 mt-2">Ganancia de Eficiencia Promedio</div>
-              <div className="text-xs text-purple-700 mt-1">Mejora por agente</div>
-            </div>
-            <div className="text-center p-6 bg-primary/10 rounded-lg">
-              <div className="text-3xl font-bold text-primary">{agentPerformance?.agents.length || 0}</div>
-              <div className="text-sm text-primary/80 mt-2">Agentes Optimizados</div>
-              <div className="text-xs text-primary/70 mt-1">Distribución equilibrada de la carga de trabajo</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Detailed Analysis */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Análisis Detallado</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Mejoras Clave Logradas</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-center">
-                  <TrendingDown className="w-4 h-4 text-green-600 mr-2" />
-                  Reducción del {visitReduction.toFixed(1)}% en visitas semanales totales
-                </li>
-                <li className="flex items-center">
-                  <Users className="w-4 h-4 text-primary mr-2" />
-                  Carga de trabajo equilibrada en todos los {agentPerformance?.agents.length || 0} agentes
-                </li>
-                <li className="flex items-center">
-                  <Clock className="w-4 h-4 text-purple-600 mr-2" />
-                  Asignación optimizada del tiempo de servicio
-                </li>
-                <li className="flex items-center">
-                  <Target className="w-4 h-4 text-primary mr-2" />
-                  Mantenimiento del 100% de cobertura de tiendas
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Beneficios Operativos</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Reducción de costos operativos a través de menos visitas</li>
-                <li>• Mejora en la satisfacción del agente con cargas de trabajo equilibradas</li>
-                <li>• Mayor eficiencia en rutas y gestión del tiempo</li>
-                <li>• Mejor asignación de recursos y planificación</li>
-                <li>• Mantenimiento de estándares de calidad del servicio</li>
-              </ul>
-            </div>
-          </div>
+          <DataTable columns={columns} data={storeComparison} />
         </CardContent>
       </Card>
     </div>
