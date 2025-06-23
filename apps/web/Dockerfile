@@ -25,6 +25,10 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
+# Set build-time environment variable for API base URL
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
 # Build the web application
 RUN cd apps/web && pnpm run build
 
