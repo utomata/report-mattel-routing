@@ -226,3 +226,4 @@ Desarrollado con ❤️ por el equipo de [Utomata](https://utomata.io) para Matt
 # Trigger new build
 # Test build with logging permissions
 # Test trigger
+# Test build with secret permissions
