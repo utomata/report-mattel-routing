@@ -102,6 +102,48 @@ export interface VisitTimeDistribution {
   hourly_distribution: HourlyDistribution[];
 }
 
+export interface DailyVisits {
+  Monday: number;
+  Tuesday: number;
+  Wednesday: number;
+  Thursday: number;
+  Friday: number;
+  Saturday: number;
+  Sunday: number;
+}
+
+export interface ChainStore {
+  store_id: string;
+  name: string;
+  sales: number;
+  weekly_visits: number;
+  min_weekly_visits: number;
+  max_weekly_visits: number;
+  coverage_status: string;
+  daily_visits: DailyVisits;
+  latitude: number;
+  longitude: number;
+}
+
+export interface ChainStoresData {
+  chain: string;
+  total_stores: number;
+  stores: ChainStore[];
+}
+
+export interface AgentStore {
+  name: string;
+  sales: number;
+  coverage_status: string;
+  weekly_visits: number;
+  daily_visits: DailyVisits;
+}
+
+export interface AgentStoresData {
+  agent: string;
+  stores: AgentStore[];
+}
+
 export interface StoreLocation {
   store_id: string;
   name: string;
@@ -204,6 +246,15 @@ class ApiService {
 
   async getVisitTimeDistribution(): Promise<VisitTimeDistribution> {
     return this.request<VisitTimeDistribution>('/api/coverage/visit-time-distribution');
+  }
+
+  // Chain and Agent specific store APIs
+  async getChainStores(chainName: string): Promise<ChainStoresData> {
+    return this.request<ChainStoresData>(`/api/coverage/chain-stores/${encodeURIComponent(chainName)}`);
+  }
+
+  async getAgentStores(agentName: string): Promise<AgentStoresData> {
+    return this.request<AgentStoresData>(`/api/coverage/agent-stores/${encodeURIComponent(agentName)}`);
   }
 
   // Maps and Routing APIs

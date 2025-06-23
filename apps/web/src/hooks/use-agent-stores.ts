@@ -1,21 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '@/lib/api';
-
-interface AgentStore {
-  name: string;
-  sales: number;
-  coverage_status: string;
-  weekly_visits: number;
-  daily_visits: {
-    Monday: number;
-    Tuesday: number;
-    Wednesday: number;
-    Thursday: number;
-    Friday: number;
-    Saturday: number;
-    Sunday: number;
-  };
-}
+import { apiService, type AgentStore } from '@/lib/api';
 
 interface UseAgentStoresResult {
   stores: AgentStore[];
@@ -39,11 +23,7 @@ export const useAgentStores = (agentName: string | null): UseAgentStoresResult =
       setError(null);
       
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/coverage/agent-stores/${encodeURIComponent(agentName)}`);
-        if (!response.ok) {
-          throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
+        const data = await apiService.getAgentStores(agentName);
         setStores(data.stores || []);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch agent stores'));

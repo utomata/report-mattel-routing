@@ -19,18 +19,13 @@ export const useStoreChainAnalysis = () => {
   });
 };
 
-// Top Stores Analysis
+// Top Stores Analysis - Note: This endpoint was removed
 export const useTopStoresAnalysis = () => {
   return useQuery({
     queryKey: ['coverage', 'top-stores'],
-    queryFn: async () => {
-      const response = await fetch('http://127.0.0.1:8000/api/coverage/top-stores');
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-      }
-      return response.json();
-    },
+    queryFn: () => Promise.resolve({ stores: [] }),
     staleTime: 5 * 60 * 1000,
+    enabled: false, // Disabled since this endpoint was removed
   });
 };
 
