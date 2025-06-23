@@ -17,6 +17,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { DataTable as CoverageAgentDataTable } from '@/components/coverage-agent-table/data-table';
+import { columns as coverageAgentColumns } from '@/components/coverage-agent-table/columns';
+import { DataTable as CoverageChainDataTable } from '@/components/coverage-chain-table/data-table';
+import { columns as coverageChainColumns } from '@/components/coverage-chain-table/columns';
+import { DataTable as StorePerformanceDataTable } from '@/components/store-performance-table/data-table';
+import { columns as storePerformanceColumns, StorePerformanceData } from '@/components/store-performance-table/columns';
+import { useAllStores } from '@/hooks/use-all-stores';
 
 const Coverage = () => {
   const [selectedChain, setSelectedChain] = useState<string | null>(null);
@@ -41,6 +48,12 @@ const Coverage = () => {
     isLoading: isLoadingAgentStores, 
     error: agentStoresError 
   } = useAgentStores(selectedAgent);
+
+  const { 
+    data: allStoresData, 
+    loading: isLoadingAllStores, 
+    error: allStoresError 
+  } = useAllStores();
 
 
 
@@ -88,13 +101,23 @@ const Coverage = () => {
     adminTime: agent.admin_time_percentage,
     weeklyVisits: agent.weekly_visits,
     efficiencyRating: agent.efficiency_rating,
+    onViewAgent: setSelectedAgent,
   })) || [];
 
   const storeChainCoverage = storeChainAnalysis?.chains.map(chain => ({
     chain: chain.chain,
     stores: chain.total_stores,
     weeklyVisits: chain.weekly_visits,
-    coverage: chain.coverage_ratio
+    coverage: chain.coverage_ratio,
+    onViewChain: setSelectedChain,
+  })) || [];
+
+  // Process all stores data for the table
+  const storePerformanceTableData: StorePerformanceData[] = allStoresData?.stores.map(store => ({
+    name: store.name,
+    chain: store.chain,
+    sales: store.sales,
+    weeklyVisits: store.weekly_visits,
   })) || [];
   
 
@@ -114,54 +137,7 @@ const Coverage = () => {
           <p className="text-sm text-gray-600">Métricas de rendimiento para todos los agentes de campo activos</p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4">Agente</th>
-                  <th className="text-center py-3 px-4">Visitas Semanales</th>
-                  <th className="text-center py-3 px-4">Tiempo en Tienda %</th>
-                  <th className="text-center py-3 px-4">Tiempo de Viaje %</th>
-                  <th className="text-center py-3 px-4">Rendimiento</th>
-                  <th className="text-center py-3 px-4">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {agentPerformanceData.map((agent, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium">{agent.name}</td>
-                    <td className="text-center py-3 px-4">{agent.weeklyVisits}</td>
-                    <td className="text-center py-3 px-4 text-green-600 font-semibold">{agent.storeTime.toFixed(1)}%</td>
-                    <td className="text-center py-3 px-4">{agent.travelTime.toFixed(1)}%</td>
-                    <td className="text-center py-3 px-4">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        agent.efficiencyRating === 'Excellent' ? 'bg-green-100 text-green-800' : 
-                        agent.efficiencyRating === 'Good' ? 'bg-primary/10 text-primary' : 
-                        agent.efficiencyRating === 'Average' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {agent.efficiencyRating === 'Excellent' ? 'Excelente' :
-                         agent.efficiencyRating === 'Good' ? 'Bueno' :
-                         agent.efficiencyRating === 'Average' ? 'Promedio' :
-                         agent.efficiencyRating}
-                      </span>
-                    </td>
-                    <td className="text-center py-3 px-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedAgent(agent.name)}
-                        className="flex items-center justify-center space-x-1 mx-auto"
-                      >
-                        <Eye className="w-3 h-3" />
-                        <span>Ver</span>
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CoverageAgentDataTable columns={coverageAgentColumns} data={agentPerformanceData} />
         </CardContent>
       </Card>
 
@@ -172,52 +148,37 @@ const Coverage = () => {
           <p className="text-sm text-gray-600">Métricas de cobertura y rendimiento por cadena de tiendas</p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                              <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Cadena</th>
-                    <th className="text-center py-3 px-4">Total Tiendas</th>
-                    <th className="text-center py-3 px-4">Visitas Semanales</th>
-                    <th className="text-center py-3 px-4">Ratio Cobertura</th>
-                    <th className="text-center py-3 px-4">Estado</th>
-                    <th className="text-center py-3 px-4">Acción</th>
-                  </tr>
-                </thead>
-              <tbody>
-                {storeChainCoverage.map((chain, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium">{chain.chain}</td>
-                    <td className="text-center py-3 px-4">{chain.stores}</td>
-                    <td className="text-center py-3 px-4 text-blue-600 font-semibold">{chain.weeklyVisits}</td>
-                    <td className="text-center py-3 px-4">{chain.coverage.toFixed(2)}</td>
-                    <td className="text-center py-3 px-4">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        chain.coverage >= 1.0 ? 'bg-green-100 text-green-800' : 
-                        chain.coverage >= 0.8 ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {chain.coverage >= 1.0 ? 'Óptima' :
-                         chain.coverage >= 0.8 ? 'Buena' :
-                         'Mejorable'}
-                      </span>
-                    </td>
-                    <td className="text-center py-3 px-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedChain(chain.chain)}
-                        className="flex items-center justify-center space-x-1 mx-auto"
-                      >
-                        <Eye className="w-3 h-3" />
-                        <span>Ver</span>
-                      </Button>
-                    </td>
-                  </tr>
+          <CoverageChainDataTable columns={coverageChainColumns} data={storeChainCoverage} />
+        </CardContent>
+      </Card>
+
+      {/* Store Performance Table - Priority 3 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Rendimiento de Tiendas</CardTitle>
+          <p className="text-sm text-gray-600">Métricas de rendimiento para todas las tiendas del sistema</p>
+        </CardHeader>
+        <CardContent>
+          {isLoadingAllStores ? (
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <Skeleton className="h-10 w-64" />
+                <Skeleton className="h-10 w-48" />
+              </div>
+              <div className="space-y-2">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+          ) : allStoresError ? (
+            <div className="text-red-600 text-center py-8">
+              <AlertCircle className="w-5 h-5 mx-auto mb-2" />
+              Error al cargar las tiendas: {allStoresError}
+            </div>
+          ) : (
+            <StorePerformanceDataTable columns={storePerformanceColumns} data={storePerformanceTableData} />
+          )}
         </CardContent>
       </Card>
 

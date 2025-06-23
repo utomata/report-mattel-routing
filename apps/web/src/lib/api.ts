@@ -204,6 +204,25 @@ export interface RoutesData {
   routes: Route[];
 }
 
+export interface AllStoreData {
+  store_id: string;
+  name: string;
+  chain: string;
+  sales: number;
+  weekly_visits: number;
+  monday_visits: number;
+  tuesday_visits: number;
+  wednesday_visits: number;
+  thursday_visits: number;
+  friday_visits: number;
+  saturday_visits: number;
+  sunday_visits: number;
+}
+
+export interface AllStoresData {
+  stores: AllStoreData[];
+}
+
 // API Service class
 class ApiService {
   private baseUrl: string;
@@ -287,6 +306,11 @@ class ApiService {
 
   async getRoutes(processType: 'manual' | 'optimized'): Promise<RoutesData> {
     return this.request<RoutesData>(`/api/maps/routes/${processType}`);
+  }
+
+  // All Stores API
+  async getAllStores(): Promise<AllStoresData> {
+    return this.request<AllStoresData>('/api/all-stores');
   }
 
   // Health check

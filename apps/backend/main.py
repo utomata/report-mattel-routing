@@ -173,6 +173,23 @@ class Route(BaseModel):
 class RoutesData(BaseModel):
     routes: List[Route]
 
+class AllStoreData(BaseModel):
+    store_id: str
+    name: str
+    chain: str
+    sales: int
+    weekly_visits: int
+    monday_visits: int
+    tuesday_visits: int
+    wednesday_visits: int
+    thursday_visits: int
+    friday_visits: int
+    saturday_visits: int
+    sunday_visits: int
+
+class AllStoresData(BaseModel):
+    stores: List[AllStoreData]
+
 # Global data storage
 stores_df = None
 workers_df = None
@@ -552,6 +569,72 @@ def get_routes_data(process_type: str):
             })
     
     return routes
+
+def get_all_stores_data():
+    """Get comprehensive data for all stores including weekly schedule"""
+    if stores_df is None or result_df is None:
+        return []
+    
+    # Get visit counts by store and day from optimized results
+    store_visits = result_df.groupby(['store_id_destination', 'day']).size().reset_index(name='visits')
+    store_visits_pivot = store_visits.pivot(index='store_id_destination', columns='day', values='visits').fillna(0)
+    
+    # Ensure all days are present
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    for day in days:
+        if day not in store_visits_pivot.columns:
+            store_visits_pivot[day] = 0
+    
+    # Calculate weekly totals
+    store_weekly_visits = store_visits_pivot.sum(axis=1).reset_index()
+    store_weekly_visits.columns = ['store_id', 'weekly_visits']
+    
+    # Merge with store data
+    all_stores = stores_df.merge(store_weekly_visits, left_on='id', right_on='store_id', how='left')
+    all_stores['weekly_visits'] = all_stores['weekly_visits'].fillna(0).astype(int)
+    
+    # Merge with daily visit data
+    all_stores = all_stores.merge(store_visits_pivot, left_on='id', right_index=True, how='left')
+    for day in days:
+        if day in all_stores.columns:
+            all_stores[day] = all_stores[day].fillna(0).astype(int)
+        else:
+            all_stores[day] = 0
+    
+    # Extract chain from store name
+    def extract_chain(store_name):
+        if pd.isna(store_name):
+            return "Unknown"
+        # Extract the part before the first comma
+        chain = store_name.split(',')[0].strip()
+        return chain
+    
+    # Prepare the response data
+    stores_data = []
+    for _, row in all_stores.iterrows():
+        # Clean sales value (remove $ and commas)
+        sales_str = str(row['sales']).replace('$', '').replace(',', '')
+        try:
+            sales_value = int(float(sales_str))
+        except (ValueError, TypeError):
+            sales_value = 0
+            
+        stores_data.append({
+            "store_id": row['id'],
+            "name": row['store'],
+            "chain": extract_chain(row['store']),
+            "sales": sales_value,
+            "weekly_visits": int(row['weekly_visits']),
+            "monday_visits": int(row.get('Monday', 0)),
+            "tuesday_visits": int(row.get('Tuesday', 0)),
+            "wednesday_visits": int(row.get('Wednesday', 0)),
+            "thursday_visits": int(row.get('Thursday', 0)),
+            "friday_visits": int(row.get('Friday', 0)),
+            "saturday_visits": int(row.get('Saturday', 0)),
+            "sunday_visits": int(row.get('Sunday', 0))
+        })
+    
+    return stores_data
 
 # Load data on startup
 @app.on_event("startup")
@@ -977,6 +1060,13 @@ async def get_routes(process_type: str):
         ))
     
     return RoutesData(routes=routes)
+
+# All Stores API
+@app.get("/api/all-stores", response_model=AllStoresData)
+async def get_all_stores():
+    """Get comprehensive data for all stores with weekly schedule"""
+    stores_data = get_all_stores_data()
+    return AllStoresData(stores=stores_data)
 
 # Health check endpoint
 @app.get("/health")
