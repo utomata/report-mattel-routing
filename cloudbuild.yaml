@@ -1,10 +1,19 @@
 steps:
+  # Get Google Maps API Key from Secret Manager
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --secret="google-maps-api-key" > /workspace/google_maps_key.txt
+
   # Build Web App image
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
       '--build-arg', 'BUILDKIT_INLINE_CACHE=1',
       '--build-arg', 'VITE_API_BASE_URL=',
+      '--build-arg', 'VITE_GOOGLE_MAPS_API_KEY=$$(cat /workspace/google_maps_key.txt)',
       '-f', 'apps/web/Dockerfile',
       '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mattel-routing/web-app:latest',
       '.'
