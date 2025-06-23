@@ -14,12 +14,14 @@ spec:
         run.googleapis.com/cpu-throttling: "false"
         # Execution environment
         run.googleapis.com/execution-environment: gen2
+        # Force new revision
+        run.googleapis.com/revision-timestamp: "2025-06-23T00:10:00Z"
     spec:
       # Timeout for requests
       timeoutSeconds: 300
       containers:
       # Web App - Main application container (React frontend)
-      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/web-app@sha256:97ed2bf0539230bbc0f53ff7db99dd006b99e73b8a5e5e757ceacbcae27598d1
+      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/web-app:latest
         name: web-app
         ports:
         - name: http1
@@ -32,10 +34,10 @@ spec:
         - name: NODE_ENV
           value: "production"
         - name: VITE_API_BASE_URL
-          value: "http://127.0.0.1:8000"
+          value: ""
       
       # FastAPI Backend - API service container
-      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/fastapi-app@sha256:2d02bb8958b611c215a7ab18fc2c147873a7498b745f297359ade61301ede5a8
+      - image: us-central1-docker.pkg.dev/casual-athenas-25xa7/mattel-routing/fastapi-app:latest
         name: fastapi
         env:
         - name: NODE_ENV
