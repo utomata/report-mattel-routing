@@ -1,5 +1,5 @@
-// API Base URL - Backend running on port 8000
-const API_BASE_URL = 'http://127.0.0.1:8000';
+// API Base URL - Use environment variable or empty string for same-origin requests
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 // Types based on the OpenAPI schema
 export interface KPIMetrics {

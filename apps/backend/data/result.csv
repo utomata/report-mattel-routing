@@ -1,122 +1,135 @@
 worker_id,name,day,store_id_origin,store_id_destination,store_destination_name,sales,arrival_time,departure_time,service_min,trip_time
-w_id_1,"LINDA LIZETH, FLORES",fri,HOME_w_id_1,s_id_58,"Hiper, Contry",2579065.0,08:20,11:20,180,25
-w_id_1,"LINDA LIZETH, FLORES",fri,s_id_58,s_id_117,"Supercenter, Las Torres",9502723.0,11:20,17:20,360,5
-w_id_1,"LINDA LIZETH, FLORES",mon,HOME_w_id_1,s_id_8,"Bodega Aurrera, Huinala Monterrey",2032907.0,08:20,11:20,180,20
-w_id_1,"LINDA LIZETH, FLORES",mon,s_id_8,s_id_32,"Del Sol, San Nicolás Citadel",2283147.0,11:30,14:30,180,10
-w_id_1,"LINDA LIZETH, FLORES",mon,s_id_32,s_id_103,"Sears, Monterrey Citadel",2237484.0,14:30,17:30,180,0
-w_id_1,"LINDA LIZETH, FLORES",sat,HOME_w_id_1,s_id_8,"Bodega Aurrera, Huinala Monterrey",2032907.0,08:20,11:20,180,20
-w_id_1,"LINDA LIZETH, FLORES",thu,HOME_w_id_1,s_id_108,"Supercenter, Chapultepec",2992550.0,08:20,14:20,360,25
-w_id_1,"LINDA LIZETH, FLORES",thu,s_id_108,s_id_25,"Del Sol, Arcadia",1911441.0,14:40,17:40,180,15
-w_id_1,"LINDA LIZETH, FLORES",tue,HOME_w_id_1,s_id_30,"Del Sol, Girasoles Escobedo",2411339.0,10:00,13:00,180,45
-w_id_1,"LINDA LIZETH, FLORES",tue,s_id_30,s_id_104,"Sears, Monterrey Galerías",2566534.0,13:30,16:30,180,25
-w_id_1,"LINDA LIZETH, FLORES",wed,HOME_w_id_1,s_id_58,"Hiper, Contry",2579065.0,08:20,11:20,180,25
-w_id_1,"LINDA LIZETH, FLORES",wed,s_id_58,s_id_117,"Supercenter, Las Torres",9502723.0,11:20,17:20,360,5
-w_id_10,"ALONDRA LIZETH, SAUCEDA",fri,HOME_w_id_10,s_id_15,"Bodega Aurrera, Solidaridad",1351758.0,08:40,11:40,180,40
-w_id_10,"ALONDRA LIZETH, SAUCEDA",fri,s_id_15,s_id_86,"Julio Cepeda, Patio Lincoln Mty",1184824.0,12:00,14:00,120,10
-w_id_10,"ALONDRA LIZETH, SAUCEDA",fri,s_id_86,s_id_36,"Del Sol, Sendero Lincoln",3260619.0,14:00,17:00,180,0
-w_id_10,"ALONDRA LIZETH, SAUCEDA",mon,HOME_w_id_10,s_id_113,"Supercenter, Gomez Morin",8028029.0,08:40,14:40,360,45
-w_id_10,"ALONDRA LIZETH, SAUCEDA",mon,s_id_113,s_id_92,"Julio Cepeda, San Agustin Mty",2488532.0,14:50,16:50,120,10
-w_id_10,"ALONDRA LIZETH, SAUCEDA",sat,HOME_w_id_10,s_id_115,"Supercenter, La Fe",5019239.0,09:00,12:00,180,60
-w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,HOME_w_id_10,s_id_89,"Julio Cepeda, Plaza La Fe Mty",1195284.0,10:00,12:00,120,60
-w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,s_id_89,s_id_62,"Hiper, La Fe",1127117.0,12:00,14:00,120,0
-w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,s_id_62,s_id_115,"Supercenter, La Fe",5019239.0,14:00,17:00,180,0
-w_id_10,"ALONDRA LIZETH, SAUCEDA",tue,HOME_w_id_10,s_id_36,"Del Sol, Sendero Lincoln",3260619.0,10:00,13:00,180,25
-w_id_10,"ALONDRA LIZETH, SAUCEDA",tue,s_id_36,s_id_115,"Supercenter, La Fe",5019239.0,14:00,17:00,180,55
-w_id_10,"ALONDRA LIZETH, SAUCEDA",wed,HOME_w_id_10,s_id_113,"Supercenter, Gomez Morin",8028029.0,08:40,14:40,360,45
-w_id_10,"ALONDRA LIZETH, SAUCEDA",wed,s_id_113,s_id_92,"Julio Cepeda, San Agustin Mty",2488532.0,15:00,17:00,120,10
-w_id_11,"VERONICA, ALVARADO",fri,HOME_w_id_11,s_id_124,"Supercenter, Reforma Huinala",3075880.0,09:00,12:00,180,55
-w_id_11,"VERONICA, ALVARADO",fri,s_id_124,s_id_37,"Del Sol, Sendero Santa Catarina",2014237.0,13:00,16:00,180,55
-w_id_11,"VERONICA, ALVARADO",mon,HOME_w_id_11,s_id_125,"Supercenter, San Nicolas",5813568.0,08:10,11:10,180,10
-w_id_11,"VERONICA, ALVARADO",mon,s_id_125,s_id_112,"Supercenter, Escobedo Norte",3201689.0,11:40,17:40,360,25
-w_id_11,"VERONICA, ALVARADO",sat,HOME_w_id_11,s_id_125,"Supercenter, San Nicolas",5813568.0,08:10,11:10,180,10
-w_id_11,"VERONICA, ALVARADO",thu,HOME_w_id_11,s_id_116,"Supercenter, La Huasteca",3700195.0,08:40,10:40,120,35
-w_id_11,"VERONICA, ALVARADO",thu,s_id_116,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,11:00,17:00,360,20
-w_id_11,"VERONICA, ALVARADO",tue,HOME_w_id_11,s_id_116,"Supercenter, La Huasteca",3700195.0,08:40,10:40,120,35
-w_id_11,"VERONICA, ALVARADO",tue,s_id_116,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,11:00,17:00,360,20
-w_id_11,"VERONICA, ALVARADO",wed,HOME_w_id_11,s_id_125,"Supercenter, San Nicolas",5813568.0,08:20,11:20,180,10
-w_id_11,"VERONICA, ALVARADO",wed,s_id_125,s_id_124,"Supercenter, Reforma Huinala",3075880.0,12:00,15:00,180,45
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",fri,HOME_w_id_12,s_id_70,"Hiper, Sendero Escobedo",2870445.0,09:00,12:00,180,55
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",fri,s_id_70,s_id_52,"HEB, Linda Vista",3595729.0,12:30,15:30,180,30
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",mon,HOME_w_id_12,s_id_56,"HEB, Sendero",5306388.0,09:00,12:00,180,55
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",mon,s_id_56,s_id_70,"Hiper, Sendero Escobedo",2870445.0,12:20,15:20,180,10
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",sat,HOME_w_id_12,s_id_72,"Hiper, Sendero Lincoln",2032346.0,08:30,11:30,180,30
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",thu,HOME_w_id_12,s_id_72,"Hiper, Sendero Lincoln",2032346.0,08:30,11:30,180,30
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",thu,s_id_72,s_id_75,"Juguetron, Cumbres Monterrey",2838897.0,11:50,14:50,180,10
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",tue,HOME_w_id_12,s_id_52,"HEB, Linda Vista",3595729.0,09:20,12:20,180,70
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",tue,s_id_52,s_id_39,"Del Sol, Valle Soleado Gpe",1710154.0,12:40,15:40,180,20
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",wed,HOME_w_id_12,s_id_56,"HEB, Sendero",5306388.0,09:00,12:00,180,55
-w_id_12,"BRENDA  BERENISSE, SAUCEDA",wed,s_id_56,s_id_70,"Hiper, Sendero Escobedo",2870445.0,12:10,15:10,180,10
-w_id_13,"LUIS ANGEL, JUAREZ",fri,HOME_w_id_13,s_id_123,"Supercenter, Plaza Centrika",3054461.0,08:50,14:50,360,50
-w_id_13,"LUIS ANGEL, JUAREZ",mon,HOME_w_id_13,s_id_59,"Hiper, Cumbres",3401253.0,08:40,11:40,180,40
-w_id_13,"LUIS ANGEL, JUAREZ",mon,s_id_59,s_id_41,"Fresko, La Comer Cumbres",2570381.0,11:40,14:40,180,5
-w_id_13,"LUIS ANGEL, JUAREZ",mon,s_id_41,s_id_46,"HEB, De Las Lomas",3351927.0,14:40,16:40,120,5
-w_id_13,"LUIS ANGEL, JUAREZ",sat,HOME_w_id_13,s_id_59,"Hiper, Cumbres",3401253.0,08:40,11:40,180,40
-w_id_13,"LUIS ANGEL, JUAREZ",thu,HOME_w_id_13,s_id_65,"Hiper, San Nicolas",5358033.0,09:00,15:00,360,55
-w_id_13,"LUIS ANGEL, JUAREZ",thu,s_id_65,s_id_102,"Sears, Monterrey Anáhuac",2010996.0,15:00,17:00,120,5
-w_id_13,"LUIS ANGEL, JUAREZ",tue,HOME_w_id_13,s_id_55,"HEB, Santa Catarina",2357177.0,08:40,11:40,180,30
-w_id_13,"LUIS ANGEL, JUAREZ",tue,s_id_55,s_id_79,"Julio Cepeda, Contry Mty",2318633.0,12:00,15:00,180,25
-w_id_13,"LUIS ANGEL, JUAREZ",wed,HOME_w_id_13,s_id_41,"Fresko, La Comer Cumbres",2570381.0,08:40,11:40,180,35
-w_id_13,"LUIS ANGEL, JUAREZ",wed,s_id_41,s_id_59,"Hiper, Cumbres",3401253.0,11:40,14:40,180,5
-w_id_13,"LUIS ANGEL, JUAREZ",wed,s_id_59,s_id_46,"HEB, De Las Lomas",3351927.0,14:40,16:40,120,5
-w_id_2,"SONIA DEYANIRA, SAMPAYO",fri,HOME_w_id_2,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:00,11:00,180,5
-w_id_2,"SONIA DEYANIRA, SAMPAYO",fri,s_id_128,s_id_40,"Del Sol, Villa De Juarez",3206117.0,11:00,14:00,180,0
-w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,HOME_w_id_2,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:00,11:00,180,5
-w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,s_id_128,s_id_31,"Del Sol, Pablo Livas",4494987.0,11:30,14:30,180,20
-w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,s_id_31,s_id_51,"HEB, Guadalupe Livas",2281813.0,14:30,17:30,180,5
-w_id_2,"SONIA DEYANIRA, SAMPAYO",sat,HOME_w_id_2,s_id_107,"Supercenter, Cerro De La Silla",3737417.0,08:30,11:30,180,30
-w_id_2,"SONIA DEYANIRA, SAMPAYO",thu,HOME_w_id_2,s_id_114,"Supercenter, Guadalupe Nvo Leon",3293316.0,08:20,11:20,180,20
-w_id_2,"SONIA DEYANIRA, SAMPAYO",thu,s_id_114,s_id_21,"Del Sol, (Mty.) Juarez",4358357.0,11:50,14:50,180,25
-w_id_2,"SONIA DEYANIRA, SAMPAYO",tue,HOME_w_id_2,s_id_107,"Supercenter, Cerro De La Silla",3737417.0,08:30,11:30,180,30
-w_id_2,"SONIA DEYANIRA, SAMPAYO",tue,s_id_107,s_id_21,"Del Sol, (Mty.) Juarez",4358357.0,11:50,14:50,180,15
-w_id_2,"SONIA DEYANIRA, SAMPAYO",wed,HOME_w_id_2,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:00,11:00,180,5
-w_id_2,"SONIA DEYANIRA, SAMPAYO",wed,s_id_128,s_id_31,"Del Sol, Pablo Livas",4494987.0,11:20,14:20,180,20
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",fri,HOME_w_id_6,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,08:20,11:20,180,15
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",fri,s_id_109,s_id_122,"Supercenter, Paseo Real",3185498.0,11:30,14:30,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",fri,s_id_122,s_id_24,"Del Sol, Adana Lincoln",2401247.0,14:40,17:40,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",mon,HOME_w_id_6,s_id_122,"Supercenter, Paseo Real",3185498.0,08:10,11:10,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",mon,s_id_122,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,11:20,14:20,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",mon,s_id_109,s_id_54,"HEB, Puerta De Hierro",2031044.0,14:20,17:20,180,5
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",sat,HOME_w_id_6,s_id_71,"Hiper, Sendero La Fe",1913624.0,09:00,12:00,180,60
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",thu,HOME_w_id_6,s_id_49,"HEB, Gonzalitos",3303874.0,08:20,11:20,180,20
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",thu,s_id_49,s_id_83,"Julio Cepeda, Mayoreo Gonzalitos",3987839.0,11:20,13:20,120,5
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",thu,s_id_83,s_id_76,"Juguetron, Fashion Drive",3966491.0,13:30,16:30,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",tue,HOME_w_id_6,s_id_49,"HEB, Gonzalitos",3303874.0,08:20,11:20,180,20
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",tue,s_id_49,s_id_83,"Julio Cepeda, Mayoreo Gonzalitos",3987839.0,11:20,13:20,120,5
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",tue,s_id_83,s_id_76,"Juguetron, Fashion Drive",3966491.0,13:30,16:30,180,10
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",wed,HOME_w_id_6,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,08:20,11:20,180,15
-w_id_6,"LAURA GUADALUPE, RODRIGUEZ",wed,s_id_109,s_id_23,"Del Sol, (Mty.) Padre Mier",2141225.0,11:40,14:40,180,25
-w_id_7,"GUSTAVO RAMIRO, RUIZ",fri,HOME_w_id_7,s_id_57,"HEB, Valle Alto",1807749.0,08:50,11:50,180,50
-w_id_7,"GUSTAVO RAMIRO, RUIZ",fri,s_id_57,s_id_127,"Supercenter, Valle Oriente",3205726.0,12:20,15:20,180,10
-w_id_7,"GUSTAVO RAMIRO, RUIZ",mon,HOME_w_id_7,s_id_66,"Hiper, San Pedro",3163392.0,09:00,12:00,180,55
-w_id_7,"GUSTAVO RAMIRO, RUIZ",mon,s_id_66,s_id_101,"Palacio de Hierro, Tienda Monterrey",5178573.0,12:10,15:10,180,10
-w_id_7,"GUSTAVO RAMIRO, RUIZ",sat,HOME_w_id_7,s_id_43,"HEB, Concordia",2145149.0,09:00,12:00,180,55
-w_id_7,"GUSTAVO RAMIRO, RUIZ",thu,HOME_w_id_7,s_id_38,"Del Sol, Solidaridad Mty.",3188532.0,10:00,13:00,180,80
-w_id_7,"GUSTAVO RAMIRO, RUIZ",thu,s_id_38,s_id_97,"Liverpool, Monterrey",5492266.0,13:20,16:20,180,25
-w_id_7,"GUSTAVO RAMIRO, RUIZ",tue,HOME_w_id_7,s_id_81,"Julio Cepeda, Galerias Monterrey",3351750.0,10:00,13:00,180,50
-w_id_7,"GUSTAVO RAMIRO, RUIZ",tue,s_id_81,s_id_97,"Liverpool, Monterrey",5492266.0,13:10,16:10,180,0
-w_id_7,"GUSTAVO RAMIRO, RUIZ",wed,HOME_w_id_7,s_id_66,"Hiper, San Pedro",3163392.0,09:00,12:00,180,55
-w_id_7,"GUSTAVO RAMIRO, RUIZ",wed,s_id_66,s_id_101,"Palacio de Hierro, Tienda Monterrey",5178573.0,12:10,15:10,180,10
-w_id_8,"JOSE LUIS, MARTINEZ",fri,HOME_w_id_8,s_id_80,"Julio Cepeda, Cumbres Mty",1296099.0,10:00,12:00,120,60
-w_id_8,"JOSE LUIS, MARTINEZ",fri,s_id_80,s_id_96,"Liverpool, Cumbres",2793263.0,12:00,15:00,180,5
-w_id_8,"JOSE LUIS, MARTINEZ",fri,s_id_96,s_id_90,"Julio Cepeda, Plaza Via Puerta De Hierro",1504830.0,15:00,17:00,120,5
-w_id_8,"JOSE LUIS, MARTINEZ",mon,HOME_w_id_8,s_id_118,"Supercenter, Lincoln",2739474.0,08:50,11:50,180,50
-w_id_8,"JOSE LUIS, MARTINEZ",mon,s_id_118,s_id_22,"Del Sol, (Mty.) Morelos",4075477.0,12:20,15:20,180,25
-w_id_8,"JOSE LUIS, MARTINEZ",sat,HOME_w_id_8,s_id_106,"Supercenter, Apodaca Norte",2549863.0,08:20,11:20,180,20
-w_id_8,"JOSE LUIS, MARTINEZ",thu,HOME_w_id_8,s_id_22,"Del Sol, (Mty.) Morelos",4075477.0,10:00,13:00,180,35
-w_id_8,"JOSE LUIS, MARTINEZ",thu,s_id_22,s_id_95,"Liverpool, Centro",2221154.0,14:00,17:00,180,0
-w_id_8,"JOSE LUIS, MARTINEZ",tue,HOME_w_id_8,s_id_69,"Hiper, Sendero Apodaca",2409694.0,08:20,11:20,180,20
-w_id_8,"JOSE LUIS, MARTINEZ",tue,s_id_69,s_id_94,"Julio Cepeda, Sendero Apodaca Mty",1137034.0,11:20,13:20,120,0
-w_id_8,"JOSE LUIS, MARTINEZ",tue,s_id_94,s_id_106,"Supercenter, Apodaca Norte",2549863.0,13:20,16:20,180,5
-w_id_8,"JOSE LUIS, MARTINEZ",wed,HOME_w_id_8,s_id_118,"Supercenter, Lincoln",2739474.0,10:50,13:50,180,50
-w_id_8,"JOSE LUIS, MARTINEZ",wed,s_id_118,s_id_96,"Liverpool, Cumbres",2793263.0,14:00,17:00,180,10
-w_id_9,"LIZBETH ANANI, SANCHEZ",fri,HOME_w_id_9,s_id_84,"Julio Cepeda, Paseo La Fe Mty",2194460.0,10:00,12:00,120,45
-w_id_9,"LIZBETH ANANI, SANCHEZ",fri,s_id_84,s_id_99,"Liverpool, Monterrey La Fe",4421093.0,12:00,15:00,180,0
-w_id_9,"LIZBETH ANANI, SANCHEZ",mon,HOME_w_id_9,s_id_120,"Supercenter, Miguel Aleman",9014971.0,08:30,14:30,360,30
-w_id_9,"LIZBETH ANANI, SANCHEZ",mon,s_id_120,s_id_100,"Liverpool, Valle",2720893.0,14:50,17:50,180,20
-w_id_9,"LIZBETH ANANI, SANCHEZ",sat,HOME_w_id_9,s_id_111,"Supercenter, Eloy Cavazos",2687270.0,08:40,11:40,180,40
-w_id_9,"LIZBETH ANANI, SANCHEZ",thu,HOME_w_id_9,s_id_120,"Supercenter, Miguel Aleman",9014971.0,08:30,14:30,360,30
-w_id_9,"LIZBETH ANANI, SANCHEZ",thu,s_id_120,s_id_77,"Juguetron, Galerias Valle Oriente",1966479.0,14:50,17:50,180,20
-w_id_9,"LIZBETH ANANI, SANCHEZ",tue,HOME_w_id_9,s_id_121,"Supercenter, Paseo Guadalupe",3294018.0,09:00,12:00,180,55
-w_id_9,"LIZBETH ANANI, SANCHEZ",tue,s_id_121,s_id_111,"Supercenter, Eloy Cavazos",2687270.0,12:10,15:10,180,10
-w_id_9,"LIZBETH ANANI, SANCHEZ",wed,HOME_w_id_9,s_id_34,"Del Sol, Sendero Escobedo",3192291.0,10:00,13:00,180,45
-w_id_9,"LIZBETH ANANI, SANCHEZ",wed,s_id_34,s_id_99,"Liverpool, Monterrey La Fe",4421093.0,14:00,17:00,180,35
+w_id_1,"LINDA LIZETH, FLORES",fri,HOME_w_id_1,s_id_126,"Supercenter, Sendero",3095374.0,08:40,13:40,300,35
+w_id_1,"LINDA LIZETH, FLORES",fri,s_id_126,s_id_24,"Del Sol, Adana Lincoln",2401247.0,14:00,16:30,150,25
+w_id_1,"LINDA LIZETH, FLORES",mon,HOME_w_id_1,s_id_32,"Del Sol, San Nicolás Citadel",2283147.0,10:00,12:30,150,10
+w_id_1,"LINDA LIZETH, FLORES",mon,s_id_32,s_id_103,"Sears, Monterrey Citadel",2237484.0,12:30,15:00,150,0
+w_id_1,"LINDA LIZETH, FLORES",mon,s_id_103,s_id_84,"Julio Cepeda, Paseo La Fe Mty",2194460.0,15:00,17:00,120,5
+w_id_1,"LINDA LIZETH, FLORES",sat,HOME_w_id_1,s_id_120,"Supercenter, Miguel Aleman",9014971.0,08:10,10:40,150,10
+w_id_1,"LINDA LIZETH, FLORES",thu,HOME_w_id_1,s_id_120,"Supercenter, Miguel Aleman",9014971.0,08:10,14:10,360,10
+w_id_1,"LINDA LIZETH, FLORES",tue,HOME_w_id_1,s_id_37,"Del Sol, Sendero Santa Catarina",2014237.0,10:00,12:30,150,50
+w_id_1,"LINDA LIZETH, FLORES",tue,s_id_37,s_id_116,"Supercenter, La Huasteca",3700195.0,12:40,14:40,120,10
+w_id_1,"LINDA LIZETH, FLORES",tue,s_id_116,s_id_55,"HEB, Santa Catarina",2357177.0,14:40,17:10,150,5
+w_id_1,"LINDA LIZETH, FLORES",wed,HOME_w_id_1,s_id_74,"Hiper, Solidaridad",1473695.0,09:00,11:00,120,55
+w_id_1,"LINDA LIZETH, FLORES",wed,s_id_74,s_id_38,"Del Sol, Solidaridad Mty.",3188532.0,11:00,13:30,150,0
+w_id_10,"ALONDRA LIZETH, SAUCEDA",fri,HOME_w_id_10,s_id_99,"Liverpool, Monterrey La Fe",4421093.0,11:00,13:30,150,60
+w_id_10,"ALONDRA LIZETH, SAUCEDA",fri,s_id_99,s_id_101,"Palacio de Hierro, Tienda Monterrey",5178573.0,13:50,16:20,150,25
+w_id_10,"ALONDRA LIZETH, SAUCEDA",mon,HOME_w_id_10,s_id_85,"Julio Cepeda, Paseo Sta Catarina Mty",1697586.0,10:00,12:00,120,40
+w_id_10,"ALONDRA LIZETH, SAUCEDA",mon,s_id_85,s_id_97,"Liverpool, Monterrey",5492266.0,12:00,14:30,150,5
+w_id_10,"ALONDRA LIZETH, SAUCEDA",mon,s_id_97,s_id_49,"HEB, Gonzalitos",3303874.0,14:30,17:00,150,5
+w_id_10,"ALONDRA LIZETH, SAUCEDA",sat,HOME_w_id_10,s_id_71,"Hiper, Sendero La Fe",1913624.0,09:00,11:30,150,55
+w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,HOME_w_id_10,s_id_49,"HEB, Gonzalitos",3303874.0,08:40,11:10,150,40
+w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,s_id_49,s_id_85,"Julio Cepeda, Paseo Sta Catarina Mty",1697586.0,11:10,13:10,120,5
+w_id_10,"ALONDRA LIZETH, SAUCEDA",thu,s_id_85,s_id_97,"Liverpool, Monterrey",5492266.0,13:10,15:40,150,5
+w_id_10,"ALONDRA LIZETH, SAUCEDA",tue,HOME_w_id_10,s_id_112,"Supercenter, Escobedo Norte",3201689.0,08:50,14:40,350,50
+w_id_10,"ALONDRA LIZETH, SAUCEDA",tue,s_id_112,s_id_30,"Del Sol, Girasoles Escobedo",2411339.0,14:40,17:10,150,5
+w_id_10,"ALONDRA LIZETH, SAUCEDA",wed,HOME_w_id_10,s_id_99,"Liverpool, Monterrey La Fe",4421093.0,11:00,13:30,150,60
+w_id_10,"ALONDRA LIZETH, SAUCEDA",wed,s_id_99,s_id_101,"Palacio de Hierro, Tienda Monterrey",5178573.0,13:50,16:20,150,25
+w_id_11,"VERONICA, ALVARADO",fri,HOME_w_id_11,s_id_111,"Supercenter, Eloy Cavazos",2687270.0,08:40,11:10,150,45
+w_id_11,"VERONICA, ALVARADO",fri,s_id_111,s_id_52,"HEB, Linda Vista",3595729.0,11:30,14:00,150,25
+w_id_11,"VERONICA, ALVARADO",fri,s_id_52,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,14:20,16:50,150,25
+w_id_11,"VERONICA, ALVARADO",mon,HOME_w_id_11,s_id_67,"Hiper, Santa Maria",1640693.0,08:50,10:50,120,50
+w_id_11,"VERONICA, ALVARADO",mon,s_id_67,s_id_111,"Supercenter, Eloy Cavazos",2687270.0,11:00,13:30,150,10
+w_id_11,"VERONICA, ALVARADO",mon,s_id_111,s_id_25,"Del Sol, Arcadia",1911441.0,13:30,16:00,150,5
+w_id_11,"VERONICA, ALVARADO",sat,HOME_w_id_11,s_id_118,"Supercenter, Lincoln",2739474.0,08:20,10:50,150,25
+w_id_11,"VERONICA, ALVARADO",thu,HOME_w_id_11,s_id_69,"Hiper, Sendero Apodaca",2409694.0,08:30,11:00,150,25
+w_id_11,"VERONICA, ALVARADO",thu,s_id_69,s_id_70,"Hiper, Sendero Escobedo",2870445.0,11:20,13:50,150,25
+w_id_11,"VERONICA, ALVARADO",thu,s_id_70,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,14:10,16:40,150,20
+w_id_11,"VERONICA, ALVARADO",tue,HOME_w_id_11,s_id_69,"Hiper, Sendero Apodaca",2409694.0,08:20,10:50,150,25
+w_id_11,"VERONICA, ALVARADO",tue,s_id_69,s_id_70,"Hiper, Sendero Escobedo",2870445.0,11:10,13:40,150,25
+w_id_11,"VERONICA, ALVARADO",tue,s_id_70,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,14:00,16:30,150,20
+w_id_11,"VERONICA, ALVARADO",wed,HOME_w_id_11,s_id_118,"Supercenter, Lincoln",2739474.0,08:20,10:50,150,25
+w_id_11,"VERONICA, ALVARADO",wed,s_id_118,s_id_52,"HEB, Linda Vista",3595729.0,11:30,14:00,150,35
+w_id_11,"VERONICA, ALVARADO",wed,s_id_52,s_id_82,"Julio Cepeda, Gonzalitos",19996105.0,14:20,16:50,150,25
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",fri,HOME_w_id_12,s_id_83,"Julio Cepeda, Mayoreo Gonzalitos",3987839.0,10:00,12:00,120,45
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",fri,s_id_83,s_id_104,"Sears, Monterrey Galerías",2566534.0,12:00,14:30,150,5
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",fri,s_id_104,s_id_81,"Julio Cepeda, Galerias Monterrey",3351750.0,14:30,17:00,150,5
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",mon,HOME_w_id_12,s_id_57,"HEB, Valle Alto",1807749.0,09:00,11:30,150,60
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",mon,s_id_57,s_id_98,"Liverpool, Monterrey Esfera",2187262.0,11:30,14:00,150,5
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",mon,s_id_98,s_id_79,"Julio Cepeda, Contry Mty",2318633.0,14:10,16:40,150,10
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",sat,HOME_w_id_12,s_id_125,"Supercenter, San Nicolas",5813568.0,09:00,11:30,150,60
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",thu,HOME_w_id_12,s_id_125,"Supercenter, San Nicolas",5813568.0,09:00,11:30,150,60
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",thu,s_id_125,s_id_56,"HEB, Sendero",5306388.0,11:30,14:00,150,5
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",tue,HOME_w_id_12,s_id_15,"Bodega Aurrera, Solidaridad",1351758.0,08:40,11:10,150,40
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",tue,s_id_15,s_id_125,"Supercenter, San Nicolas",5813568.0,12:00,14:30,150,50
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",tue,s_id_125,s_id_56,"HEB, Sendero",5306388.0,14:30,17:00,150,5
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",wed,HOME_w_id_12,s_id_88,"Julio Cepeda, Plaza Fiesta Anahuac Mty",2259427.0,10:00,12:30,150,60
+w_id_12,"BRENDA  BERENISSE, SAUCEDA",wed,s_id_88,s_id_83,"Julio Cepeda, Mayoreo Gonzalitos",3987839.0,12:50,14:50,120,15
+w_id_13,"LUIS ANGEL, JUAREZ",fri,HOME_w_id_13,s_id_127,"Supercenter, Valle Oriente",3205726.0,08:50,11:20,150,50
+w_id_13,"LUIS ANGEL, JUAREZ",fri,s_id_127,s_id_100,"Liverpool, Valle",2720893.0,11:20,13:50,150,5
+w_id_13,"LUIS ANGEL, JUAREZ",fri,s_id_100,s_id_77,"Juguetron, Galerias Valle Oriente",1966479.0,13:50,16:20,150,5
+w_id_13,"LUIS ANGEL, JUAREZ",mon,HOME_w_id_13,s_id_115,"Supercenter, La Fe",5019239.0,09:00,11:30,150,60
+w_id_13,"LUIS ANGEL, JUAREZ",mon,s_id_115,s_id_76,"Juguetron, Fashion Drive",3966491.0,11:50,14:20,150,25
+w_id_13,"LUIS ANGEL, JUAREZ",mon,s_id_76,s_id_127,"Supercenter, Valle Oriente",3205726.0,14:30,17:00,150,10
+w_id_13,"LUIS ANGEL, JUAREZ",sat,HOME_w_id_13,s_id_115,"Supercenter, La Fe",5019239.0,09:00,11:30,150,60
+w_id_13,"LUIS ANGEL, JUAREZ",thu,HOME_w_id_13,s_id_96,"Liverpool, Cumbres",2793263.0,11:00,13:30,150,35
+w_id_13,"LUIS ANGEL, JUAREZ",thu,s_id_96,s_id_76,"Juguetron, Fashion Drive",3966491.0,13:50,16:20,150,15
+w_id_13,"LUIS ANGEL, JUAREZ",tue,HOME_w_id_13,s_id_45,"HEB, Cumbres",1507950.0,08:40,10:40,120,35
+w_id_13,"LUIS ANGEL, JUAREZ",tue,s_id_45,s_id_96,"Liverpool, Cumbres",2793263.0,11:00,13:30,150,5
+w_id_13,"LUIS ANGEL, JUAREZ",tue,s_id_96,s_id_90,"Julio Cepeda, Plaza Via Puerta De Hierro",1504830.0,13:30,15:30,120,5
+w_id_13,"LUIS ANGEL, JUAREZ",wed,HOME_w_id_13,s_id_115,"Supercenter, La Fe",5019239.0,09:00,11:30,150,60
+w_id_13,"LUIS ANGEL, JUAREZ",wed,s_id_115,s_id_127,"Supercenter, Valle Oriente",3205726.0,12:00,14:30,150,30
+w_id_2,"SONIA DEYANIRA, SAMPAYO",fri,HOME_w_id_2,s_id_121,"Supercenter, Paseo Guadalupe",3294018.0,08:20,10:50,150,15
+w_id_2,"SONIA DEYANIRA, SAMPAYO",fri,s_id_121,s_id_31,"Del Sol, Pablo Livas",4494987.0,11:00,13:30,150,10
+w_id_2,"SONIA DEYANIRA, SAMPAYO",fri,s_id_31,s_id_51,"HEB, Guadalupe Livas",2281813.0,13:30,16:00,150,5
+w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,HOME_w_id_2,s_id_58,"Hiper, Contry",2579065.0,08:40,11:10,150,35
+w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,s_id_58,s_id_22,"Del Sol, (Mty.) Morelos",4075477.0,11:20,13:50,150,10
+w_id_2,"SONIA DEYANIRA, SAMPAYO",mon,s_id_22,s_id_23,"Del Sol, (Mty.) Padre Mier",2141225.0,13:50,16:20,150,0
+w_id_2,"SONIA DEYANIRA, SAMPAYO",sat,HOME_w_id_2,s_id_107,"Supercenter, Cerro De La Silla",3737417.0,08:30,11:00,150,30
+w_id_2,"SONIA DEYANIRA, SAMPAYO",thu,HOME_w_id_2,s_id_108,"Supercenter, Chapultepec",2992550.0,08:40,11:40,180,35
+w_id_2,"SONIA DEYANIRA, SAMPAYO",thu,s_id_108,s_id_58,"Hiper, Contry",2579065.0,11:50,14:20,150,10
+w_id_2,"SONIA DEYANIRA, SAMPAYO",thu,s_id_58,s_id_22,"Del Sol, (Mty.) Morelos",4075477.0,14:30,17:00,150,10
+w_id_2,"SONIA DEYANIRA, SAMPAYO",tue,HOME_w_id_2,s_id_107,"Supercenter, Cerro De La Silla",3737417.0,12:00,14:30,150,30
+w_id_2,"SONIA DEYANIRA, SAMPAYO",tue,s_id_107,s_id_31,"Del Sol, Pablo Livas",4494987.0,14:50,17:20,150,20
+w_id_2,"SONIA DEYANIRA, SAMPAYO",wed,HOME_w_id_2,s_id_65,"Hiper, San Nicolas",5358033.0,09:10,15:10,360,50
+w_id_2,"SONIA DEYANIRA, SAMPAYO",wed,s_id_65,s_id_102,"Sears, Monterrey Anáhuac",2010996.0,15:10,17:10,120,5
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",fri,HOME_w_id_6,s_id_117,"Supercenter, Las Torres",9502723.0,08:40,14:10,330,35
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",fri,s_id_117,s_id_34,"Del Sol, Sendero Escobedo",3192291.0,14:50,17:20,150,40
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",mon,HOME_w_id_6,s_id_117,"Supercenter, Las Torres",9502723.0,08:40,11:20,160,35
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",mon,s_id_117,s_id_66,"Hiper, San Pedro",3163392.0,11:40,14:10,150,20
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",sat,HOME_w_id_6,s_id_66,"Hiper, San Pedro",3163392.0,08:20,10:50,150,25
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",thu,HOME_w_id_6,s_id_39,"Del Sol, Valle Soleado Gpe",1710154.0,10:00,12:30,150,60
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",tue,HOME_w_id_6,s_id_34,"Del Sol, Sendero Escobedo",3192291.0,10:00,12:30,150,30
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",tue,s_id_34,s_id_114,"Supercenter, Guadalupe Nvo Leon",3293316.0,13:10,15:40,150,40
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",wed,HOME_w_id_6,s_id_117,"Supercenter, Las Torres",9502723.0,08:40,13:00,260,35
+w_id_6,"LAURA GUADALUPE, RODRIGUEZ",wed,s_id_117,s_id_66,"Hiper, San Pedro",3163392.0,13:20,15:50,150,20
+w_id_7,"GUSTAVO RAMIRO, RUIZ",fri,HOME_w_id_7,s_id_33,"Del Sol, Sendero Apodaca",2349640.0,10:00,12:00,120,55
+w_id_7,"GUSTAVO RAMIRO, RUIZ",fri,s_id_33,s_id_106,"Supercenter, Apodaca Norte",2549863.0,12:00,14:30,150,5
+w_id_7,"GUSTAVO RAMIRO, RUIZ",mon,HOME_w_id_7,s_id_43,"HEB, Concordia",2145149.0,09:00,11:30,150,55
+w_id_7,"GUSTAVO RAMIRO, RUIZ",mon,s_id_43,s_id_33,"Del Sol, Sendero Apodaca",2349640.0,11:30,13:30,120,5
+w_id_7,"GUSTAVO RAMIRO, RUIZ",mon,s_id_33,s_id_106,"Supercenter, Apodaca Norte",2549863.0,13:30,16:00,150,5
+w_id_7,"GUSTAVO RAMIRO, RUIZ",sat,HOME_w_id_7,s_id_8,"Bodega Aurrera, Huinala Monterrey",2032907.0,08:50,11:20,150,50
+w_id_7,"GUSTAVO RAMIRO, RUIZ",thu,HOME_w_id_7,s_id_122,"Supercenter, Paseo Real",3185498.0,09:20,11:50,150,80
+w_id_7,"GUSTAVO RAMIRO, RUIZ",thu,s_id_122,s_id_123,"Supercenter, Plaza Centrika",3054461.0,12:10,16:50,280,25
+w_id_7,"GUSTAVO RAMIRO, RUIZ",tue,HOME_w_id_7,s_id_122,"Supercenter, Paseo Real",3185498.0,09:20,11:50,150,80
+w_id_7,"GUSTAVO RAMIRO, RUIZ",tue,s_id_122,s_id_123,"Supercenter, Plaza Centrika",3054461.0,12:10,14:50,160,25
+w_id_7,"GUSTAVO RAMIRO, RUIZ",wed,HOME_w_id_7,s_id_61,"Hiper, Huinala",1353212.0,08:50,10:50,120,50
+w_id_7,"GUSTAVO RAMIRO, RUIZ",wed,s_id_61,s_id_8,"Bodega Aurrera, Huinala Monterrey",2032907.0,10:50,13:20,150,5
+w_id_7,"GUSTAVO RAMIRO, RUIZ",wed,s_id_8,s_id_35,"Del Sol, Sendero La F‚ Mty.",3607700.0,13:40,15:40,120,10
+w_id_8,"JOSE LUIS, MARTINEZ",fri,HOME_w_id_8,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:40,11:10,150,35
+w_id_8,"JOSE LUIS, MARTINEZ",fri,s_id_128,s_id_95,"Liverpool, Centro",2221154.0,11:40,14:10,150,30
+w_id_8,"JOSE LUIS, MARTINEZ",fri,s_id_95,s_id_21,"Del Sol, (Mty.) Juarez",4358357.0,14:10,16:40,150,5
+w_id_8,"JOSE LUIS, MARTINEZ",mon,HOME_w_id_8,s_id_59,"Hiper, Cumbres",3401253.0,09:00,11:30,150,55
+w_id_8,"JOSE LUIS, MARTINEZ",mon,s_id_59,s_id_75,"Juguetron, Cumbres Monterrey",2838897.0,11:30,14:00,150,5
+w_id_8,"JOSE LUIS, MARTINEZ",mon,s_id_75,s_id_41,"Fresko, La Comer Cumbres",2570381.0,14:00,16:30,150,5
+w_id_8,"JOSE LUIS, MARTINEZ",sat,HOME_w_id_8,s_id_59,"Hiper, Cumbres",3401253.0,09:00,11:30,150,55
+w_id_8,"JOSE LUIS, MARTINEZ",thu,HOME_w_id_8,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:40,11:10,150,35
+w_id_8,"JOSE LUIS, MARTINEZ",thu,s_id_128,s_id_40,"Del Sol, Villa De Juarez",3206117.0,11:10,13:40,150,0
+w_id_8,"JOSE LUIS, MARTINEZ",tue,HOME_w_id_8,s_id_128,"Supercenter, Villa De Juarez",5294627.0,08:40,11:10,150,35
+w_id_8,"JOSE LUIS, MARTINEZ",tue,s_id_128,s_id_21,"Del Sol, (Mty.) Juarez",4358357.0,11:50,14:20,150,35
+w_id_8,"JOSE LUIS, MARTINEZ",wed,HOME_w_id_8,s_id_59,"Hiper, Cumbres",3401253.0,09:00,11:30,150,55
+w_id_8,"JOSE LUIS, MARTINEZ",wed,s_id_59,s_id_75,"Juguetron, Cumbres Monterrey",2838897.0,11:30,14:00,150,5
+w_id_8,"JOSE LUIS, MARTINEZ",wed,s_id_75,s_id_41,"Fresko, La Comer Cumbres",2570381.0,14:00,16:30,150,5
+w_id_9,"LIZBETH ANANI, SANCHEZ",fri,HOME_w_id_9,s_id_86,"Julio Cepeda, Patio Lincoln Mty",1184824.0,10:00,12:00,120,60
+w_id_9,"LIZBETH ANANI, SANCHEZ",fri,s_id_86,s_id_72,"Hiper, Sendero Lincoln",2032346.0,12:00,14:30,150,0
+w_id_9,"LIZBETH ANANI, SANCHEZ",fri,s_id_72,s_id_36,"Del Sol, Sendero Lincoln",3260619.0,14:30,17:00,150,0
+w_id_9,"LIZBETH ANANI, SANCHEZ",mon,HOME_w_id_9,s_id_72,"Hiper, Sendero Lincoln",2032346.0,09:00,11:30,150,60
+w_id_9,"LIZBETH ANANI, SANCHEZ",mon,s_id_72,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,11:40,14:10,150,10
+w_id_9,"LIZBETH ANANI, SANCHEZ",mon,s_id_109,s_id_113,"Supercenter, Gomez Morin",8028029.0,14:30,17:40,190,20
+w_id_9,"LIZBETH ANANI, SANCHEZ",sat,HOME_w_id_9,s_id_124,"Supercenter, Reforma Huinala",3075880.0,08:50,11:20,150,50
+w_id_9,"LIZBETH ANANI, SANCHEZ",thu,HOME_w_id_9,s_id_80,"Julio Cepeda, Cumbres Mty",1296099.0,10:00,12:00,120,55
+w_id_9,"LIZBETH ANANI, SANCHEZ",thu,s_id_80,s_id_54,"HEB, Puerta De Hierro",2031044.0,12:00,14:30,150,5
+w_id_9,"LIZBETH ANANI, SANCHEZ",thu,s_id_54,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,14:30,17:00,150,5
+w_id_9,"LIZBETH ANANI, SANCHEZ",tue,HOME_w_id_9,s_id_124,"Supercenter, Reforma Huinala",3075880.0,08:50,11:20,150,50
+w_id_9,"LIZBETH ANANI, SANCHEZ",tue,s_id_124,s_id_36,"Del Sol, Sendero Lincoln",3260619.0,12:30,15:00,150,70
+w_id_9,"LIZBETH ANANI, SANCHEZ",wed,HOME_w_id_9,s_id_109,"Supercenter, Cumbres Monterrey",4482509.0,08:50,11:20,150,50
+w_id_9,"LIZBETH ANANI, SANCHEZ",wed,s_id_109,s_id_113,"Supercenter, Gomez Morin",8028029.0,11:40,17:40,360,20
