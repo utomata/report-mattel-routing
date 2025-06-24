@@ -839,8 +839,7 @@ async def get_store_performance_comparison():
             sales=stat['sales'],
             visits_before=stat['visits_before'],
             visits_after=stat['visits_after'],
-            visit_change=stat['visit_change'],
-            coverage_status=stat['coverage_status']
+            visit_change=stat['visit_change']
         ))
     
     return StorePerformanceComparison(stores=stores)
