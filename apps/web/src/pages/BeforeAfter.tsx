@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line } from 'recharts';
+
 import { TrendingUp, TrendingDown, Users, Clock, Target, AlertCircle } from 'lucide-react';
 import { useComparisonData } from '@/hooks/use-comparison';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,7 +10,7 @@ import { DataTable as AgentDataTable } from '@/components/agent-table/data-table
 import { columns as agentColumns } from '@/components/agent-table/columns';
 
 const BeforeAfter = () => {
-  const { metrics, agentPerformance, storePerformance, weeklyDistribution, isLoading, isError, error } = useComparisonData();
+  const { metrics, agentPerformance, storePerformance, isLoading, isError, error } = useComparisonData();
 
   const metricTranslations: { [key: string]: string } = {
     'Total Weekly Visits': 'Visitas Semanales Totales',
@@ -23,14 +23,7 @@ const BeforeAfter = () => {
     minutes: 'minutos',
   };
 
-  const dayNameMap: { [key: string]: string } = {
-    Monday: 'Lunes',
-    Tuesday: 'Martes',
-    Wednesday: 'Miércoles',
-    Thursday: 'Jueves',
-    Friday: 'Viernes',
-    Saturday: 'Sábado',
-  };
+
 
   // Loading state
   if (isLoading) {
@@ -91,14 +84,6 @@ const BeforeAfter = () => {
     isReduction: metric.improvement_percentage < 0,
   })) || [];
 
-  // Format weekly distribution data
-  const weeklyComparison = weeklyDistribution?.weekly_data.map(day => ({
-    day: day.day,
-    before: day.before,
-    after: day.after,
-    improvement: day.improvement,
-  })) || [];
-
   // Format agent performance data
   const agentComparison = agentPerformance?.agents.map(agent => ({
     agent: agent.name,
@@ -115,18 +100,7 @@ const BeforeAfter = () => {
     before: store.visits_before,
     after: store.visits_after,
     change: store.visit_change,
-    status: store.coverage_status,
   })) || [];
-
-  // Calculate performance radar data (simplified - you can enhance with real data)
-  const performanceRadar = [
-    { subject: 'Eficiencia de Visita', before: 72, after: 87 },
-    { subject: 'Optimización de Tiempo', before: 65, after: 85 },
-    { subject: 'Balance de Carga de Agente', before: 58, after: 82 },
-    { subject: 'Cobertura Geográfica', before: 85, after: 88 },
-    { subject: 'Adherencia a Horarios', before: 78, after: 89 },
-    { subject: 'Utilización de Recursos', before: 70, after: 86 },
-  ];
 
   // Calculate summary metrics
   const totalVisitsBefore = metrics?.metrics.find(m => m.metric === 'Total Weekly Visits')?.before || 0;
@@ -215,53 +189,6 @@ const BeforeAfter = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Performance Radar */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Comparación de Rendimiento Multidimensional</CardTitle>
-            <p className="text-sm text-gray-600">Análisis exhaustivo a través de métricas operativas clave</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <RadarChart data={performanceRadar}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis angle={90} domain={[0, 100]} />
-                <Radar name="Proceso Manual" dataKey="before" stroke="#94A3B8" fill="#94A3B8" fillOpacity={0.3} />
-                <Radar name="Optimizado con Utomata" dataKey="after" stroke="#3000CC" fill="#3000CC" fillOpacity={0.3} />
-                <Tooltip />
-              </RadarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Weekly Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Distribución Diaria de Visitas</CardTitle>
-            <p className="text-sm text-gray-600">Comparación de visitas por día a lo largo de la semana</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={weeklyComparison}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" tickFormatter={(day) => dayNameMap[day as keyof typeof dayNameMap] || day} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="before" fill="#94A3B8" name="Proceso Manual" />
-                <Bar dataKey="after" fill="#3000CC" name="Optimizado con Utomata" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-
-
-
 
       {/* Agent Performance Comparison */}
       <Card>

@@ -75,7 +75,7 @@ export const columns: ColumnDef<AgentPerformance>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Ganancia de Eficiencia
+          Ganancia
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )

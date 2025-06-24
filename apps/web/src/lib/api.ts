@@ -63,7 +63,6 @@ export interface StorePerformance {
   visits_before: number;
   visits_after: number;
   visit_change: number;
-  coverage_status: string;
 }
 
 export interface StorePerformanceComparison {
@@ -223,6 +222,16 @@ export interface AllStoresData {
   stores: AllStoreData[];
 }
 
+export interface TimeDistribution {
+  name: string;
+  value: number;
+  color: string;
+}
+
+export interface AgentTimeDistribution {
+  distribution: TimeDistribution[];
+}
+
 // API Service class
 class ApiService {
   private baseUrl: string;
@@ -311,6 +320,10 @@ class ApiService {
   // All Stores API
   async getAllStores(): Promise<AllStoresData> {
     return this.request<AllStoresData>('/api/all-stores');
+  }
+
+  async getAgentTimeDistribution(): Promise<AgentTimeDistribution> {
+    return this.request<AgentTimeDistribution>('/api/dashboard/agent-time-distribution');
   }
 
   // Health check

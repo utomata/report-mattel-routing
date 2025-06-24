@@ -254,7 +254,7 @@ const Coverage = () => {
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 sticky left-0 z-10 bg-white border-r">
                           <div className="font-medium text-gray-900">
-                            {store.name.includes(',') ? store.name.split(',').slice(1).join(',').trim() : store.name}
+                            {store.name}
                           </div>
                         </td>
                         <td className="text-center py-3 px-4">
@@ -406,7 +406,7 @@ const Coverage = () => {
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 sticky left-0 z-10 bg-white border-r">
                           <div className="font-medium text-gray-900">
-                            {store.name.includes(',') ? store.name.split(',').slice(1).join(',').trim() : store.name}
+                            {store.name}
                           </div>
                         </td>
                         <td className="text-center py-3 px-4">

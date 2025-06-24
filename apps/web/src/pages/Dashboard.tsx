@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Users, MapPin, DollarSign, Clock, Target, AlertCircle, Activity } from 'lucide-react';
 import { useDashboardData } from '@/hooks/use-dashboard';
+import { useAgentTimeDistribution } from '@/hooks/use-agent-time-distribution';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Dashboard = () => {
   const { kpis, isLoading, isError, error } = useDashboardData();
+  const { data: timeDistributionData, loading: timeDistributionLoading, error: timeDistributionError } = useAgentTimeDistribution();
 
   // Loading state
   if (isLoading) {
@@ -57,7 +59,7 @@ const Dashboard = () => {
 
   // Format KPI data - only current optimized state
   const kpiData = kpis ? [
-    { title: 'Tiendas Totales', value: kpis.total_stores.toString(), change: 'Red de minoristas Mattel', icon: MapPin },
+    { title: 'Tiendas Totales', value: kpis.total_stores.toString(), change: 'Puntos de venta Mattel', icon: MapPin },
     { title: 'Agentes de Campo Activos', value: kpis.active_agents.toString(), change: 'Equipo operativo en campo', icon: Users },
             { title: 'Visitas Semanales', value: kpis.weekly_visits_optimized.toString(), change: 'Optimizado con Utomata', icon: Target },
     { title: 'Tiempo Promedio de Servicio', value: `${Math.round(kpis.avg_service_time)} min`, change: 'Por visita a tienda', icon: Clock },
@@ -65,11 +67,11 @@ const Dashboard = () => {
     { title: 'Utilización del Equipo', value: `${utilizationRate}%`, change: 'Eficiencia operativa del equipo', icon: Activity },
   ] : [];
 
-  // Agent time distribution (example data for current optimized state)
-  const timeDistribution = [
-    { name: 'Servicio en Tienda', value: 67, color: '#3000CC' },
-    { name: 'Tiempo de Viaje', value: 23, color: '#5B21B6' },
-    { name: 'Administrativo', value: 10, color: '#A855F7' },
+  // Agent time distribution from API
+  const timeDistribution = timeDistributionData?.distribution || [
+    { name: 'Servicio en Tienda', value: 87, color: '#3000CC' },
+    { name: 'Tiempo de Viaje', value: 9, color: '#5B21B6' },
+    { name: 'Administrativo', value: 4, color: '#A855F7' },
   ];
 
   return (
@@ -104,72 +106,58 @@ const Dashboard = () => {
       </div>
 
       {/* Agent Time Distribution Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Distribución de Tiempo del Agente</CardTitle>
-            <p className="text-sm text-gray-600">Asignación optimizada del tiempo diario por agente</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={timeDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={120}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {timeDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex justify-center space-x-4 mt-4">
-              {timeDistribution.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-sm text-gray-600">{item.name}: {item.value}%</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* System Performance Insights */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Estado del Sistema</CardTitle>
-            <p className="text-sm text-gray-600">Información clave del sistema optimizado</p>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>Distribución de Tiempo del Agente</CardTitle>
+          <p className="text-sm text-gray-600">Asignación optimizada del tiempo diario por agente</p>
+        </CardHeader>
+        <CardContent>
+          {timeDistributionLoading ? (
             <div className="space-y-4">
-              <div className="p-4 bg-green-50 rounded-lg">
-                <h3 className="font-semibold text-green-800">Cobertura Completa</h3>
-                <p className="text-sm text-green-700 mt-2">
-                  Todas las {kpis?.total_stores || 0} tiendas en el área metropolitana de Monterrey están cubiertas por el sistema optimizado.
-                </p>
-              </div>
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-blue-800">Equipo Optimizado</h3>
-                <p className="text-sm text-blue-700 mt-2">
-                  {kpis?.active_agents || 0} agentes activos con distribución de carga de trabajo optimizada y rutas eficientes.
-                </p>
-              </div>
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <h3 className="font-semibold text-purple-800">Rendimiento del Sistema</h3>
-                <p className="text-sm text-purple-700 mt-2">
-                  Sistema ejecutando {kpis?.weekly_visits_optimized || 0} visitas semanales con tiempo promedio de {Math.round(kpis?.avg_service_time || 0)} minutos por tienda.
-                </p>
+              <Skeleton className="h-64 w-full rounded-full" />
+              <div className="flex justify-center space-x-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-4 w-32" />
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          ) : timeDistributionError ? (
+            <div className="text-red-600 text-center py-8">
+              <AlertCircle className="w-5 h-5 mx-auto mb-2" />
+              Error al cargar distribución de tiempo
+            </div>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={timeDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={120}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {timeDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex justify-center space-x-4 mt-4">
+                {timeDistribution.map((item, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }}></div>
+                    <span className="text-sm text-gray-600">{item.name}: {item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
