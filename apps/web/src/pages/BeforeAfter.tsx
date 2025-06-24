@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Users, Clock, Target, AlertCircle } from 'luc
 import { useComparisonData } from '@/hooks/use-comparison';
 import { useDashboardData } from '@/hooks/use-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { DataTable } from '@/components/store-table/data-table';
+import { DataTableSimple } from '@/components/store-table/data-table-simple';
 import { columns } from '@/components/store-table/columns';
 import { DataTable as AgentDataTable } from '@/components/agent-table/data-table';
 import { columns as agentColumns } from '@/components/agent-table/columns';
@@ -16,13 +16,16 @@ const BeforeAfter = () => {
 
   const metricTranslations: { [key: string]: string } = {
     'Total Weekly Visits': 'Visitas Semanales Totales',
-    'Average Service Time': 'Tiempo Promedio de Servicio',
-    'Total Travel Time': 'Tiempo Total de Viaje',
+    'Sales Coverage': 'Cobertura de Ventas',
+    'Agent Utilization': 'Utilización de Agentes',
+    'Store Utilization': 'Utilización de Tiendas',
   };
 
   const unitTranslations: { [key: string]: string } = {
     visits: 'visitas',
-    minutes: 'minutos',
+    'M MXN': 'M MXN',
+    percent: '%',
+    tiendas: 'tiendas',
   };
 
 
@@ -36,8 +39,8 @@ const BeforeAfter = () => {
           <Skeleton className="h-4 w-2/3" />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i}>
               <CardHeader className="pb-3">
                 <Skeleton className="h-6 w-32" />
@@ -104,6 +107,8 @@ const BeforeAfter = () => {
     change: store.visit_change,
   })) || [];
 
+
+
   // Calculate summary metrics
   const totalVisitsBefore = metrics?.metrics.find(m => m.metric === 'Total Weekly Visits')?.before || 0;
   const totalVisitsAfter = metrics?.metrics.find(m => m.metric === 'Total Weekly Visits')?.after || 0;
@@ -123,11 +128,16 @@ const BeforeAfter = () => {
       </div>
 
       {/* Comparison Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {comparisonMetrics.map((metric, index) => {
           const change = metric.after - metric.before;
           const percentChange = metric.improvement_percentage;
           const isImprovement = metric.isReduction ? change < 0 : change > 0;
+          
+          // Display value with unit
+          const getDisplayValue = (value: number, unit: string) => {
+            return `${value} ${unit}`;
+          };
           
           return (
             <Card key={index} className="hover:shadow-lg transition-shadow">
@@ -135,28 +145,58 @@ const BeforeAfter = () => {
                 <CardTitle className="text-lg">{metric.metric}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Proceso Manual:</span>
-                    <span className="text-lg font-semibold text-gray-700">{metric.before} {metric.unit}</span>
+                <div className="space-y-3">
+                                    {/* Manual vs Optimized - Visual comparison */}
+                  <div className="space-y-3">
+                    {/* Manual Process */}
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                      <div className="text-sm text-red-700 font-medium mb-2">Manual</div>
+                      <div className="text-xl font-bold text-red-800">
+                        {getDisplayValue(metric.before, metric.unit)}
+                      </div>
+                    </div>
+                    
+                    {/* Arrow indicator */}
+                    <div className="text-center">
+                      <div className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                        <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                      </div>
+                    </div>
+                    
+                    {/* Optimized Process */}
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 text-center">
+                      <div className="text-sm text-primary font-medium mb-2">Utomata</div>
+                      <div className="text-xl font-bold text-primary">
+                        {getDisplayValue(metric.after, metric.unit)}
+                      </div>
+                    </div>
+                    
+                    {/* Equals indicator */}
+                    <div className="text-center">
+                      <div className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                        <span className="text-gray-600 font-bold text-lg">=</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Optimizado con Utomata:</span>
-                    <span className="text-lg font-semibold text-primary">{metric.after} {metric.unit}</span>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Cambio:</span>
-                      <span className={`text-sm font-semibold ${isImprovement ? 'text-green-600' : 'text-red-600'}`}>
-                        {metric.before > 0 ? (
-                          <>
-                            {((metric.after - metric.before) / metric.before * 100) > 0 ? '+' : ''}
-                            {(((metric.after - metric.before) / metric.before * 100)).toFixed(1)}%
-                          </>
-                        ) : (
-                          'N/A'
-                        )}
-                      </span>
+                  
+                  {/* Improvement indicator */}
+                  <div className={`border rounded-lg p-4 text-center ${
+                    isImprovement ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className="text-sm font-medium mb-2 text-gray-700">Cambio</div>
+                    <div className={`text-xl font-bold ${
+                      isImprovement ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {metric.before > 0 ? (
+                        <>
+                          {((metric.after - metric.before) / metric.before * 100) > 0 ? '+' : ''}
+                          {(((metric.after - metric.before) / metric.before * 100)).toFixed(1)}%
+                        </>
+                      ) : (
+                        'N/A'
+                      )}
                     </div>
                   </div>
                 </div>
@@ -166,31 +206,7 @@ const BeforeAfter = () => {
         })}
       </div>
 
-      {/* Key Improvements Summary - Changed to show actual improvements */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Resumen del Impacto de la Optimización</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <div className="text-3xl font-bold text-green-600">+{totalVisitsAfter - totalVisitsBefore}</div>
-              <div className="text-sm text-green-800 mt-2">Más Visitas por Semana</div>
-              <div className="text-xs text-green-700 mt-1">{totalVisitsBefore} → {totalVisitsAfter} visitas totales</div>
-            </div>
-            <div className="text-center p-6 bg-blue-50 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600">{kpis?.visited_stores}</div>
-              <div className="text-sm text-blue-800 mt-2">Tiendas con Cobertura</div>
-              <div className="text-xs text-blue-700 mt-1">De {kpis?.total_stores} tiendas totales en el sistema</div>
-            </div>
-            <div className="text-center p-6 bg-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-purple-600">{kpis?.utilization_rate}%</div>
-              <div className="text-sm text-purple-800 mt-2">Utilización del Equipo</div>
-              <div className="text-xs text-purple-700 mt-1">Eficiencia operativa optimizada</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
 
       {/* Agent Performance Comparison */}
       <Card>
@@ -210,7 +226,7 @@ const BeforeAfter = () => {
           <p className="text-sm text-gray-600">Visitas semanales por tienda: enrutamiento manual vs optimizado</p>
         </CardHeader>
         <CardContent>
-          <DataTable columns={columns} data={storeComparison} />
+          <DataTableSimple columns={columns} data={storeComparison} />
         </CardContent>
       </Card>
     </div>

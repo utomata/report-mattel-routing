@@ -56,8 +56,8 @@ class StoreChainDistribution(BaseModel):
 
 class ComparisonMetric(BaseModel):
     metric: str
-    before: int
-    after: int
+    before: float
+    after: float
     unit: str
     improvement_percentage: float
 
@@ -759,15 +759,42 @@ async def get_dashboard_kpis():
         visited_stores_count = 0
         visited_stores_sales = 0
     
-    # Calculate utilization rate based on optimized visits
-    # Utilization = (actual visits / theoretical maximum visits per week) * 100
-    # Assuming 5 working days per week, 8 hours per day, average 2 hours per visit
-    theoretical_max_visits_per_agent_per_week = 5 * 8 / 2  # 20 visits per agent per week
-    theoretical_total_max_visits = active_agents * theoretical_max_visits_per_agent_per_week
-    utilization_rate = (optimized_visits / theoretical_total_max_visits * 100) if theoretical_total_max_visits > 0 else 0
+    # Calculate utilization rate based on actual time usage vs available working time
+    # This considers real service times, travel times, store hours, and agent schedules
+    if not result_df.empty and active_agents > 0:
+        # Calculate total actual time used per agent (service + travel time)
+        result_df_copy = result_df.copy()
+        result_df_copy['total_time_per_visit'] = result_df_copy['service_min'] + result_df_copy['trip_time']
+        
+        # Group by agent and calculate total time used per week
+        agent_time_usage = result_df_copy.groupby('worker_id')['total_time_per_visit'].sum()
+        
+        # Calculate effective working time per agent per week
+        # Based on actual data: agents work 8:00-18:00 (Mon-Fri) and 8:00-13:00 (Sat)
+        # But effective time is constrained by:
+        # 1. Store opening hours (earliest: 6:00, latest close: 23:00)
+        # 2. Agent working hours (8:00-18:00 Mon-Fri, 8:00-13:00 Sat)
+        # 3. Realistic work capacity (breaks, administrative time, etc.)
+        
+        # Effective working hours per day considering store-agent hour overlap:
+        # Mon-Fri: 8:00-18:00 = 10 hours, but subtract 1 hour for breaks/admin = 9 hours
+        # Saturday: 8:00-13:00 = 5 hours, but subtract 0.5 hour for breaks/admin = 4.5 hours
+        effective_minutes_per_agent_per_week = (5 * 9 * 60) + (1 * 4.5 * 60)  # 2970 minutes
+        
+        # Calculate utilization rate
+        # Utilization = (total productive time used / total effective available time) * 100
+        total_time_used = agent_time_usage.sum() if len(agent_time_usage) > 0 else 0
+        total_effective_time = active_agents * effective_minutes_per_agent_per_week
+        
+        utilization_rate = (total_time_used / total_effective_time * 100) if total_effective_time > 0 else 0
+        
+        # Cap at 100% to avoid over-utilization display issues
+        utilization_rate = min(utilization_rate, 100.0)
+    else:
+        utilization_rate = 0
     
     return KPIMetrics(
-        total_stores=total_stores,
+        total_stores=visited_stores_count,
         visited_stores=visited_stores_count,
         active_agents=active_agents,
         weekly_visits_manual=manual_visits,
@@ -795,6 +822,62 @@ async def get_comparison_metrics():
     """Get core comparison metrics between manual and optimized processes"""
     efficiency = calculate_visit_efficiency()
     
+    # Calculate sales coverage for manual process
+    if not manual_df.empty and 'store_id_destination' in manual_df.columns:
+        manual_visited_stores = manual_df['store_id_destination'].unique()
+        manual_sales_coverage = stores_df[stores_df['id'].isin(manual_visited_stores)]['sales'].sum()
+    else:
+        manual_sales_coverage = 0
+    
+    # Calculate sales coverage for optimized process
+    if not result_df.empty and 'store_id_destination' in result_df.columns:
+        optimized_visited_stores = result_df['store_id_destination'].unique()
+        optimized_sales_coverage = stores_df[stores_df['id'].isin(optimized_visited_stores)]['sales'].sum()
+    else:
+        optimized_sales_coverage = 0
+    
+    # Calculate utilization rates for both processes
+    # Get active agents count
+    active_agents = len(workers_df[workers_df['activos'] == 1]) if 'activos' in workers_df.columns else len(workers_df)
+    effective_minutes_per_agent_per_week = (5 * 9 * 60) + (1 * 4.5 * 60)  # 2970 minutes
+    
+    # Manual utilization
+    if not manual_df.empty and active_agents > 0:
+        manual_df_copy = manual_df.copy()
+        manual_df_copy['total_time_per_visit'] = manual_df_copy['service_min'] + manual_df_copy['trip_time']
+        manual_total_time = manual_df_copy['total_time_per_visit'].sum()
+        manual_total_effective_time = active_agents * effective_minutes_per_agent_per_week
+        manual_utilization = min((manual_total_time / manual_total_effective_time * 100), 100.0) if manual_total_effective_time > 0 else 0
+    else:
+        manual_utilization = 0
+    
+    # Optimized utilization (reuse calculation from dashboard)
+    if not result_df.empty and active_agents > 0:
+        result_df_copy = result_df.copy()
+        result_df_copy['total_time_per_visit'] = result_df_copy['service_min'] + result_df_copy['trip_time']
+        optimized_total_time = result_df_copy['total_time_per_visit'].sum()
+        optimized_total_effective_time = active_agents * effective_minutes_per_agent_per_week
+        optimized_utilization = min((optimized_total_time / optimized_total_effective_time * 100), 100.0) if optimized_total_effective_time > 0 else 0
+    else:
+        optimized_utilization = 0
+    
+    # Calculate store utilization for both processes
+    # Store utilization = stores visited / total stores available
+    total_stores = len(stores_df)
+    
+    # Manual store utilization
+    manual_stores_visited = len(manual_visited_stores) if not manual_df.empty else 0
+    manual_store_utilization = (manual_stores_visited / total_stores * 100) if total_stores > 0 else 0
+    
+    # Optimized store utilization  
+    optimized_stores_visited = len(optimized_visited_stores) if not result_df.empty else 0
+    optimized_store_utilization = (optimized_stores_visited / total_stores * 100) if total_stores > 0 else 0
+    
+    # Calculate improvement percentages
+    sales_improvement = ((optimized_sales_coverage - manual_sales_coverage) / manual_sales_coverage * 100) if manual_sales_coverage > 0 else 0
+    utilization_improvement = ((optimized_utilization - manual_utilization) / manual_utilization * 100) if manual_utilization > 0 else 0
+    store_utilization_improvement = ((optimized_store_utilization - manual_store_utilization) / manual_store_utilization * 100) if manual_store_utilization > 0 else 0
+    
     metrics = [
         ComparisonMetric(
             metric="Total Weekly Visits",
@@ -804,18 +887,25 @@ async def get_comparison_metrics():
             improvement_percentage=round(efficiency['improvement_percentage'], 1)
         ),
         ComparisonMetric(
-            metric="Average Service Time",
-            before=int(manual_df['service_min'].mean()),
-            after=int(result_df['service_min'].mean()),
-            unit="minutes",
-            improvement_percentage=0.0  # Calculate if needed
+            metric="Sales Coverage",
+            before=int(manual_sales_coverage / 1000000),  # Convert to millions
+            after=int(optimized_sales_coverage / 1000000),  # Convert to millions
+            unit="M MXN",
+            improvement_percentage=round(sales_improvement, 1)
         ),
         ComparisonMetric(
-            metric="Total Travel Time",
-            before=int(manual_df['trip_time'].sum()),
-            after=int(result_df['trip_time'].sum()),
-            unit="minutes",
-            improvement_percentage=0.0  # Calculate if needed
+            metric="Agent Utilization",
+            before=round(manual_utilization, 1),
+            after=round(optimized_utilization, 1),
+            unit="percent",
+            improvement_percentage=round(utilization_improvement, 1)
+        ),
+        ComparisonMetric(
+            metric="Store Utilization",
+            before=manual_stores_visited,
+            after=optimized_stores_visited,
+            unit="tiendas",
+            improvement_percentage=round(store_utilization_improvement, 1)
         )
     ]
     
