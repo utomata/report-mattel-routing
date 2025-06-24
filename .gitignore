@@ -131,3 +131,6 @@ iac/.terraform/
 iac/*.tfstate
 iac/*.tfstate.backup
 iac/.terraform.lock.hcl
+
+# Terraform backup files
+iac/*.backup

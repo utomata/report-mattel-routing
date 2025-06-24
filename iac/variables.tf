@@ -21,14 +21,16 @@ variable "app_domain" {
   default     = "mattel-routing-app.utomata.ai"
 }
 
-variable "authorized_emails" {
-  description = "List of authorized email addresses for Zero Trust access"
+
+
+variable "reusable_policy_group_id" {
+  description = "ID of the reusable access group to use for the application"
   type        = list(string)
-  default     = [
-    "admin@utomata.ai",
-    "team@utomata.ai"
-  ]
 }
+
+
+
+
 
 variable "enable_service_token" {
   description = "Whether to create a service token for API access"
@@ -40,4 +42,4 @@ variable "session_duration" {
   description = "Session duration for Zero Trust access"
   type        = string
   default     = "24h"
-} 
+}

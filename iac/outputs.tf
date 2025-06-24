@@ -15,18 +15,18 @@ output "application_aud" {
 
 output "service_token_id" {
   description = "The ID of the service token for API access"
-  value       = cloudflare_zero_trust_access_service_token.api_token.id
+  value       = var.enable_service_token ? cloudflare_zero_trust_access_service_token.api_token[0].id : null
 }
 
 output "service_token_client_id" {
   description = "The client ID of the service token"
-  value       = cloudflare_zero_trust_access_service_token.api_token.client_id
+  value       = var.enable_service_token ? cloudflare_zero_trust_access_service_token.api_token[0].client_id : null
   sensitive   = true
 }
 
 output "service_token_client_secret" {
   description = "The client secret of the service token"
-  value       = cloudflare_zero_trust_access_service_token.api_token.client_secret
+  value       = var.enable_service_token ? cloudflare_zero_trust_access_service_token.api_token[0].client_secret : null
   sensitive   = true
 }
 
@@ -38,17 +38,13 @@ output "zone_id" {
 output "access_policies" {
   description = "List of created access policies"
   value = {
-    allow_policy = {
-      id   = cloudflare_zero_trust_access_policy.allow_authorized_users.id
-      name = cloudflare_zero_trust_access_policy.allow_authorized_users.name
+    reusable_policy = {
+      id   = cloudflare_zero_trust_access_policy.reusable_policy.id
+      name = cloudflare_zero_trust_access_policy.reusable_policy.name
     }
-    deny_policy = {
-      id   = cloudflare_zero_trust_access_policy.deny_all_others.id
-      name = cloudflare_zero_trust_access_policy.deny_all_others.name
-    }
-    service_token_policy = {
-      id   = cloudflare_zero_trust_access_policy.service_token_policy.id
-      name = cloudflare_zero_trust_access_policy.service_token_policy.name
-    }
+    service_token_policy = var.enable_service_token ? {
+      id   = cloudflare_zero_trust_access_policy.service_token_policy[0].id
+      name = cloudflare_zero_trust_access_policy.service_token_policy[0].name
+    } : null
   }
-} 
+}
