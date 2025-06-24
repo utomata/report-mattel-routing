@@ -1,0 +1,18 @@
+# Cloudflare Configuration
+cloudflare_api_token    = "your-cloudflare-api-token-here"
+cloudflare_account_id   = "your-cloudflare-account-id-here"
+
+# Domain Configuration
+domain_name = "utomata.ai"
+app_domain  = "mattel-routing-app.utomata.ai"
+
+# Access Control
+authorized_emails = [
+  "admin@utomata.ai",
+  "team@utomata.ai",
+  "user@example.com"
+]
+
+# Optional Settings
+enable_service_token = true
+session_duration     = "24h" 

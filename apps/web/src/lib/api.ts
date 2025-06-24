@@ -4,11 +4,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 // Types based on the OpenAPI schema
 export interface KPIMetrics {
   total_stores: number;
+  visited_stores: number;
   active_agents: number;
   weekly_visits_manual: number;
   weekly_visits_optimized: number;
   avg_service_time: number;
   total_sales_coverage: number;
+  utilization_rate: number;
 }
 
 export interface DailyComparison {

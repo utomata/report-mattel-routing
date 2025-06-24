@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { TrendingUp, TrendingDown, Users, Clock, Target, AlertCircle } from 'lucide-react';
 import { useComparisonData } from '@/hooks/use-comparison';
+import { useDashboardData } from '@/hooks/use-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DataTable } from '@/components/store-table/data-table';
 import { columns } from '@/components/store-table/columns';
@@ -11,6 +12,7 @@ import { columns as agentColumns } from '@/components/agent-table/columns';
 
 const BeforeAfter = () => {
   const { metrics, agentPerformance, storePerformance, isLoading, isError, error } = useComparisonData();
+  const { kpis } = useDashboardData();
 
   const metricTranslations: { [key: string]: string } = {
     'Total Weekly Visits': 'Visitas Semanales Totales',
@@ -164,27 +166,27 @@ const BeforeAfter = () => {
         })}
       </div>
 
-      {/* Key Improvements Summary - Moved to top */}
+      {/* Key Improvements Summary - Changed to show actual improvements */}
       <Card>
         <CardHeader>
           <CardTitle>Resumen del Impacto de la Optimización</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-6 bg-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-purple-600">+{totalVisitsAfter - totalVisitsBefore}</div>
-              <div className="text-sm text-purple-800 mt-2">Visitas Adicionales por Semana</div>
-              <div className="text-xs text-purple-700 mt-1">{totalVisitsBefore} → {totalVisitsAfter} visitas totales</div>
-            </div>
-            <div className="text-center p-6 bg-orange-50 rounded-lg">
-              <div className="text-3xl font-bold text-orange-600">-{avgServiceTimeBefore - avgServiceTimeAfter}min</div>
-              <div className="text-sm text-orange-800 mt-2">Menos Tiempo por Visita</div>
-              <div className="text-xs text-orange-700 mt-1">{avgServiceTimeBefore} → {avgServiceTimeAfter} minutos promedio</div>
+            <div className="text-center p-6 bg-green-50 rounded-lg">
+              <div className="text-3xl font-bold text-green-600">+{totalVisitsAfter - totalVisitsBefore}</div>
+              <div className="text-sm text-green-800 mt-2">Más Visitas por Semana</div>
+              <div className="text-xs text-green-700 mt-1">{totalVisitsBefore} → {totalVisitsAfter} visitas totales</div>
             </div>
             <div className="text-center p-6 bg-blue-50 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600">+{Math.round((totalTravelTimeAfter - totalTravelTimeBefore) / 60)}h</div>
-              <div className="text-sm text-blue-800 mt-2">Tiempo Total de Viaje</div>
-              <div className="text-xs text-blue-700 mt-1">{Math.round(totalTravelTimeBefore / 60)}h → {Math.round(totalTravelTimeAfter / 60)}h semanales</div>
+              <div className="text-3xl font-bold text-blue-600">{kpis?.visited_stores}</div>
+              <div className="text-sm text-blue-800 mt-2">Tiendas con Cobertura</div>
+              <div className="text-xs text-blue-700 mt-1">De {kpis?.total_stores} tiendas totales en el sistema</div>
+            </div>
+            <div className="text-center p-6 bg-purple-50 rounded-lg">
+              <div className="text-3xl font-bold text-purple-600">{kpis?.utilization_rate}%</div>
+              <div className="text-sm text-purple-800 mt-2">Utilización del Equipo</div>
+              <div className="text-xs text-purple-700 mt-1">Eficiencia operativa optimizada</div>
             </div>
           </div>
         </CardContent>

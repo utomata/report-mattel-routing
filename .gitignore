@@ -124,3 +124,10 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 *.pem
+
+# Terraform
+iac/terraform.tfvars
+iac/.terraform/
+iac/*.tfstate
+iac/*.tfstate.backup
+iac/.terraform.lock.hcl

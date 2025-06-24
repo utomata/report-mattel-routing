@@ -30,11 +30,13 @@ app.add_middleware(
 # Pydantic models for API responses
 class KPIMetrics(BaseModel):
     total_stores: int
+    visited_stores: int
     active_agents: int
     weekly_visits_manual: int
     weekly_visits_optimized: int
     avg_service_time: float
     total_sales_coverage: int
+    utilization_rate: float
 
 class DailyComparison(BaseModel):
     day: str
@@ -751,17 +753,28 @@ async def get_dashboard_kpis():
     # Calculate sales coverage for optimized process (stores actually visited)
     if not result_df.empty and 'store_id_destination' in result_df.columns:
         visited_stores = result_df['store_id_destination'].unique()
+        visited_stores_count = len(visited_stores)
         visited_stores_sales = stores_df[stores_df['id'].isin(visited_stores)]['sales'].sum()
     else:
+        visited_stores_count = 0
         visited_stores_sales = 0
+    
+    # Calculate utilization rate based on optimized visits
+    # Utilization = (actual visits / theoretical maximum visits per week) * 100
+    # Assuming 5 working days per week, 8 hours per day, average 2 hours per visit
+    theoretical_max_visits_per_agent_per_week = 5 * 8 / 2  # 20 visits per agent per week
+    theoretical_total_max_visits = active_agents * theoretical_max_visits_per_agent_per_week
+    utilization_rate = (optimized_visits / theoretical_total_max_visits * 100) if theoretical_total_max_visits > 0 else 0
     
     return KPIMetrics(
         total_stores=total_stores,
+        visited_stores=visited_stores_count,
         active_agents=active_agents,
         weekly_visits_manual=manual_visits,
         weekly_visits_optimized=optimized_visits,
         avg_service_time=round(avg_service_time, 2),
-        total_sales_coverage=int(visited_stores_sales)
+        total_sales_coverage=int(visited_stores_sales),
+        utilization_rate=round(utilization_rate, 1)
     )
 
 @app.get("/api/dashboard/efficiency-comparison", response_model=EfficiencyComparison)

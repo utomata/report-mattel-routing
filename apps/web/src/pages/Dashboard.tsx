@@ -54,8 +54,8 @@ const Dashboard = () => {
     );
   }
 
-  // Calculate utilization rate (from your data: 98.40%)
-  const utilizationRate = 98.4;
+  // Get utilization rate from API data
+  const utilizationRate = kpis?.utilization_rate || 0;
 
   // Format KPI data - only current optimized state
   const kpiData = kpis ? [
@@ -79,7 +79,7 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Panel de Optimización de Rutas Mattel</h1>
-        <p className="text-gray-600 mt-2">Estado actual del sistema optimizado para {kpis?.total_stores || 0} tiendas en el área metropolitana de Monterrey</p>
+        <p className="text-gray-600 mt-2">Estado actual del sistema optimizado - Visitando {kpis?.visited_stores} de {kpis?.total_stores} tiendas en el área metropolitana de Monterrey</p>
       </div>
 
       {/* KPI Cards */}
